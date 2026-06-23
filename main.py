@@ -114,7 +114,7 @@ async def buy_um(c: CallbackQuery):
     buy_state[c.from_user.id] = "amount"
     await c.message.edit_text("💰 Miqdor kiriting (min 0.01)")
 
-@dp.message(F.photo)
+@dp.message()
 async def amount_handler(m: Message):
     if m.from_user.id not in buy_state:
         return
