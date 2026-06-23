@@ -103,8 +103,39 @@ async def shop(m: Message):
     await m.answer(text)
 
 # ───────── SHOP ITEMS (FIXED) ─────────
-@dp.message(F.text.regexp(r"^[1-5]$"))
+@dp.message(F.text.in_(["1", "2", "3", "4", "5"]))
 async def shop_numbers(m: Message):
+    if m.chat.type != "private":
+        return
+
+    if not shop_state.get(m.from_user.id):
+        return
+
+    products = {
+        "1": ("🎟 3 oylik Premium", 2),
+        "2": ("⭐ 50 Stars", 0.15),
+        "3": ("🪙 10k Bot puli", 0.07),
+        "4": ("💎 1 ta Olmos", 0.01),
+        "5": ("🇺🇸 USA Telegram raqami", 0.1)
+    }
+
+    name, price = products[m.text]
+
+    await bot.send_message(
+        GROUP_ID,
+        f"🛒 Yangi buyurtma\n\n"
+        f"👤 {m.from_user.full_name}\n"
+        f"🆔 {m.from_user.id}\n"
+        f"📦 {name}\n"
+        f"💰 Narxi: {price} 🅤🅜"
+    )
+
+    del shop_state[m.from_user.id]
+
+    await m.answer(
+        "✅ Buyurtma qabul qilindi.\n"
+        "Adminlar tez orada siz bilan bog'lanadi."
+    )
     if m.chat.type != "private":
         return
 
