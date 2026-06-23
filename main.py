@@ -177,7 +177,7 @@ async def amount_handler(m: Message):
     try:
         amount = float(m.text)
     except ValueError:
-        return await m.answer("❌ Raqam kiriting (masalan: 1.5)")
+        return await m.answer("")
 
     if amount < 0.01:
         return await m.answer("❌ Min 0.01")
