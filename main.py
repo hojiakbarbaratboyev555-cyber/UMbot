@@ -260,7 +260,7 @@ async def ma(m: Message):
     await change_balance(sender, -amount)
     await change_balance(receiver, amount)
 
-    await m.reply(await m.reply(
+    await m.reply(
     f"💸 O‘tkazma\n\n"
     f"👤 {m.from_user.full_name} dan\n"
     f"👤 {m.reply_to_message.from_user.full_name} ga\n"
