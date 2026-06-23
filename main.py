@@ -9,10 +9,10 @@ from aiogram.types import Message, CallbackQuery, Update
 from aiogram.filters import Command, CommandStart
 
 # ───────── CONFIG ─────────
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-ADMIN_ID = int(os.getenv("ADMIN_ID"))
-GROUP_ID = int(os.getenv("GROUP_ID"))
-WEBHOOK_HOST = os.getenv("WEBHOOK_HOST")
+BOT_TOKEN = "8139143734:AAGAIrIxS_etgzNF92ADU36lVpiIUZ6bQ-k"
+ADMIN_ID = -1003881398546
+GROUP_ID = -1003680334929
+WEBHOOK_HOST = "https://umbot-foen.onrender.com"
 
 WEBHOOK_PATH = f"/webhook/{BOT_TOKEN}"
 WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
