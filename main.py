@@ -68,6 +68,9 @@ async def start(m: Message):
 # ───────── PROFIL ─────────
 @dp.message(Command("profil"))
 async def profil(m: Message):
+    if m.chat.type != "private":
+        return
+
     bal = await get_balance(m.from_user.id)
 
     kb = InlineKeyboardMarkup(inline_keyboard=[
@@ -82,6 +85,9 @@ async def profil(m: Message):
 # ───────── SHOP ─────────
 @dp.message(Command("shop"))
 async def shop(m: Message):
+    if m.chat.type != "private":
+        return
+
     bal = await get_balance(m.from_user.id)
 
     kb = InlineKeyboardMarkup(inline_keyboard=[
