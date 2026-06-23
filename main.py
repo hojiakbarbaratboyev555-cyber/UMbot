@@ -265,7 +265,7 @@ async def ma(m: Message):
     f"👤 {m.from_user.full_name} dan\n"
     f"👤 {m.reply_to_message.from_user.full_name} ga\n"
     f"💰 {amount} 🅤🅜"
-))
+)
 
 # ───────── WEBHOOK ─────────
 @app.on_event("startup")
