@@ -59,12 +59,13 @@ async def change_balance(user_id: int, amount: float):
 
 # ───────── STATE ─────────
 buy_state = {}
+shop_state = {}
 
 # ───────── START ─────────
 @dp.message(CommandStart())
 async def start(m: Message):
     await get_balance(m.from_user.id)
-    await m.answer("👋 UM Bot ishlayapti")
+    await m.answer("Assalomu alaykum {m.from_user.full_name}")
 
 # ───────── PROFIL ─────────
 @dp.message(Command("profil"))
@@ -89,30 +90,32 @@ async def shop(m: Message):
     if m.chat.type != "private":
         return
 
-    bal = await get_balance(m.from_user.id)
+    shop_state[m.from_user.id] = True
 
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🛒 Do‘kon", callback_data="shop")]
-    ])
-
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🎟 Premium = 2 🅤🅜", callback_data="p1")],
-        [InlineKeyboardButton(text="⭐ Stars = 0.15", callback_data="p2")],
-        [InlineKeyboardButton(text="🪙 Bot puli = 0.07", callback_data="p3")],
-        [InlineKeyboardButton(text="💎 Olmos = 0.01", callback_data="p4")],
-        [InlineKeyboardButton(text="🇺🇸 USA = 0.1", callback_data="p5")]
-    ])
-
-    await c.message.edit_text(
-        "🛒 DO‘KON",
-        reply_markup=kb
+    text = (
+        "🛒 DO‘KON NARXLARI\n\n"
+        "🎟 Premium = 2 🅤🅜\n"
+        "⭐ Stars = 0.15 🅤🅜\n"
+        "🪙 Bot puli = 0.07 🅤🅜\n"
+        "💎 Olmos = 0.01 🅤🅜\n"
+        "🇺🇸 USA = 0.1 🅤🅜\n\n"
+        "──────────────────\n"
+        "📌 Tanlang:\n"
+        "1 - Premium\n"
+        "2 - Stars\n"
+        "3 - Bot puli\n"
+        "4 - Olmos\n"
+        "5 - USA"
     )
+
+    await m.answer(text)
 
 # ───────── BUY UM ─────────
 @dp.callback_query(F.data == "buy_um")
 async def buy_um(c: CallbackQuery):
     buy_state[c.from_user.id] = "amount"
-    await c.message.edit_text("💰 Miqdor kiriting (min 0.01)")
+    await c.message.edit_text("Siz oʻz hisobingizga 🅤🅜 sotib olmoqdasiz\n1🅤🅜 = 100000soʻm\nminimum narx:0.01\nKarta: 9860196619854934\nEgasi:M.N\n💰Harid qilmoqchi boʻlgan miqdorni kiriting")
+    await c.answer()
 
 # ───────── AMOUNT ─────────
 @dp.message(F.text)
@@ -137,8 +140,6 @@ async def amount_handler(m: Message):
 # ───────── RECEIPT ─────────
 @dp.message(F.photo)
 async def receipt(m: Message):
-    print("RECEIPT TRIGGERED")  # 🔥 DEBUG FIX
-
     if m.from_user.id not in buy_state:
         return
 
@@ -146,23 +147,44 @@ async def receipt(m: Message):
     del buy_state[m.from_user.id]
 
     kb = InlineKeyboardMarkup(inline_keyboard=[
-    [
-        InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"ok_{m.from_user.id}_{amount}"),
-        InlineKeyboardButton(text="❌ Rad etish", callback_data=f"no_{m.from_user.id}")
-    ]
-])
+        [
+            InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"ok_{m.from_user.id}_{amount}"),
+            InlineKeyboardButton(text="❌ Rad etish", callback_data=f"no_{m.from_user.id}")
+        ]
+    ])
+
     await bot.send_photo(
-    GROUP_ID,
-    m.photo[-1].file_id,
-    caption=f"🧾 To‘lov\nUser: {m.from_user.full_name}\nID: {m.from_user.id}\n{amount} 🅤🅜",
-    reply_markup=kb
-)
+        GROUP_ID,
+        m.photo[-1].file_id,
+        caption=f"🧾 To‘lov\nUser: {m.from_user.full_name}\nID: {m.from_user.id}\n{amount} 🅤🅜",
+        reply_markup=kb
+    )
+
+    await m.answer("⏳ Tekshiruvga yuborildi\nAdminlar tasdiqlashini kuting")
+
+# ───────── SHOP ITEM (FAKAT SHOPDAN KEYIN ISHLAYDI) ─────────
+@dp.message(F.text.in_(["1", "2", "3", "4", "5"]))
+async def shop_numbers(m: Message):
+    if m.chat.type != "private":
+        return
+
+    if not shop_state.get(m.from_user.id):
+        return
+
+    data = {
+        "1": "🎟 Premium\nNarx: 2🅤🅜",
+        "2": "⭐ Stars\nNarx: 0.15🅤🅜",
+        "3": "🪙 Bot puli\nNarx: 0.07🅤🅜",
+        "4": "💎 Olmos\nNarx: 0.01🅤🅜",
+        "5": "🇺🇸 USA\nNarx: 0.1🅤🅜"
+    }
+
+    await m.answer(data[m.text])
 
 # ───────── APPROVE ─────────
 @dp.callback_query(F.data.startswith("ok_"))
 async def ok(c: CallbackQuery):
-
-    await c.answer()  # 🔥 FIX
+    await c.answer()
 
     _, uid, amount = c.data.split("_")
 
@@ -178,8 +200,7 @@ async def ok(c: CallbackQuery):
 # ───────── REJECT ─────────
 @dp.callback_query(F.data.startswith("no_"))
 async def no(c: CallbackQuery):
-
-    await c.answer()  # 🔥 FIX
+    await c.answer()
 
     uid = int(c.data.split("_")[1])
 
@@ -216,7 +237,7 @@ async def ma(m: Message):
     await change_balance(receiver, amount)
 
     await m.reply(
-        f"💸 Transfer\n{m.from_user.full_name} ➝ {m.reply_to_message.from_user.full_name}\n{amount} 🅤🅜"
+        f"💸 Oʻtkazma\n{m.from_user.full_name} ➝ {m.reply_to_message.from_user.full_name}\n{amount} 🅤🅜"
     )
 
 # ───────── WEBHOOK ─────────
