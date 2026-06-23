@@ -65,7 +65,7 @@ shop_state = {}
 @dp.message(CommandStart())
 async def start(m: Message):
     await get_balance(m.from_user.id)
-    await m.answer("Assalomu alaykum {m.from_user.full_name}")
+    await m.answer(f"Assalomu alaykum {m.from_user.full_name}")
 
 # ───────── PROFIL ─────────
 @dp.message(Command("profil"))
@@ -94,13 +94,13 @@ async def shop(m: Message):
 
     text = (
         "🛒 DO‘KON NARXLARI\n\n"
-        "🎟 Premium = 2 🅤🅜\n"
-        "⭐ Stars = 0.15 🅤🅜\n"
-        "🪙 Bot puli = 0.07 🅤🅜\n"
-        "💎 Olmos = 0.01 🅤🅜\n"
-        "🇺🇸 USA = 0.1 🅤🅜\n\n"
+        "🎟 Premium = 2 🅤🅜\nBu boʻlimda sizga 3 oylik premium taqdim etiladi\n\n"
+        "⭐ 50ta Stars = 0.15 🅤🅜\nBunda siz 50ta starsni 0.15🅤🅜 ga almashtirasiz\n\n"
+        "🪙 Bot puli = 0.07 🅤🅜\nBu boʻlimda Universal mafia botining shaxsiy pul birligiga almashtirasiz 🅤🅜 ni 10=0.07\n\n"
+        "💎 Olmos = 0.01 🅤🅜\nHuddi shu botning olmos tizimi 1ta olmos 0.01🅤🅜\n\n"
+        "🇺🇸 USA = 0.1 🅤🅜\n1ta Amerika telegram raqami 0.1🅤🅜\n\n\n"
         "──────────────────\n"
-        "📌 Tanlang:\n"
+        "Bu yerda har bir maxsulot uchun ajratilgan raqamlar ularni kiriting va sovgʻalarga ega boʻling (Eslatma:Raqamni kiritishingiz bilan buyurtma qabul qilinadi bekor qilib boʻlmaydi!)\n📌 Tanlang:\n"
         "1 - Premium\n"
         "2 - Stars\n"
         "3 - Bot puli\n"
@@ -114,16 +114,27 @@ async def shop(m: Message):
 @dp.callback_query(F.data == "buy_um")
 async def buy_um(c: CallbackQuery):
     buy_state[c.from_user.id] = "amount"
-    await c.message.edit_text("Siz oʻz hisobingizga 🅤🅜 sotib olmoqdasiz\n1🅤🅜 = 100000soʻm\nminimum narx:0.01\nKarta: 9860196619854934\nEgasi:M.N\n💰Harid qilmoqchi boʻlgan miqdorni kiriting")
+    await c.message.edit_text(
+        "Siz oʻz hisobingizga 🅤🅜 sotib olmoqdasiz\n\n"
+        "1🅤🅜 = 100000 soʻm\n"
+        "minimum: 0.01\n"
+        "Karta: 9860196619854934\n"
+        "Egasi: M.N\n\n"
+        "💰 Miqdorni kiriting"
+    )
     await c.answer()
 
-# ───────── AMOUNT ─────────
+# ───────── AMOUNT (FIXED) ─────────
 @dp.message(F.text)
 async def amount_handler(m: Message):
     if m.from_user.id not in buy_state:
         return
 
     if buy_state[m.from_user.id] != "amount":
+        return
+
+    # shop 1-5 bilan konflikt bo‘lmasligi uchun
+    if m.text in ["1", "2", "3", "4", "5"]:
         return
 
     try:
@@ -160,9 +171,9 @@ async def receipt(m: Message):
         reply_markup=kb
     )
 
-    await m.answer("⏳ Tekshiruvga yuborildi\nAdminlar tasdiqlashini kuting")
+    await m.answer("⏳ Tekshiruvga yuborildi")
 
-# ───────── SHOP ITEM (FAKAT SHOPDAN KEYIN ISHLAYDI) ─────────
+# ───────── SHOP ITEMS (FIXED) ─────────
 @dp.message(F.text.in_(["1", "2", "3", "4", "5"]))
 async def shop_numbers(m: Message):
     if m.chat.type != "private":
@@ -172,11 +183,11 @@ async def shop_numbers(m: Message):
         return
 
     data = {
-        "1": "🎟 Premium\nNarx: 2🅤🅜",
-        "2": "⭐ Stars\nNarx: 0.15🅤🅜",
-        "3": "🪙 Bot puli\nNarx: 0.07🅤🅜",
-        "4": "💎 Olmos\nNarx: 0.01🅤🅜",
-        "5": "🇺🇸 USA\nNarx: 0.1🅤🅜"
+        "1": "🎟 3 oylik Premium\nNarx: 2🅤🅜",
+        "2": "⭐ 50 Stars\nNarx: 0.15🅤🅜",
+        "3": "🪙 10k Bot puli\nNarx: 0.07🅤🅜",
+        "4": "💎 1ta Olmos\nNarx: 0.01🅤🅜",
+        "5": "🇺🇸 USA tg \nNarx: 0.1🅤🅜"
     }
 
     await m.answer(data[m.text])
@@ -237,7 +248,7 @@ async def ma(m: Message):
     await change_balance(receiver, amount)
 
     await m.reply(
-        f"💸 Oʻtkazma\n{m.from_user.full_name} ➝ {m.reply_to_message.from_user.full_name}\n{amount} 🅤🅜"
+        f"💸 O‘tkazma\n{m.from_user.full_name} ➝ {m.reply_to_message.from_user.full_name}\n{amount} 🅤🅜"
     )
 
 # ───────── WEBHOOK ─────────
