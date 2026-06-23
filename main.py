@@ -92,18 +92,18 @@ async def shop(m: Message):
 
     text = (
         "🛒 DO‘KON NARXLARI\n\n"
-        "🎟 Premium = 2 🅤🅜\n"
-        "⭐ Stars = 0.15 🅤🅜\n"
-        "🪙 Bot puli = 0.07 🅤🅜\n"
-        "💎 Olmos = 0.01 🅤🅜\n"
-        "🇺🇸 USA = 0.1 🅤🅜\n\n"
-        "📌 1 - Premium\n2 - Stars\n3 - Bot puli\n4 - Olmos\n5 - USA"
+        "🎟 3 oylik Premium = 2 🅤🅜\n"
+        "⭐ 50ta Stars = 0.15 🅤🅜\n"
+        "🪙 Universal mafia Bot puli 10k= 0.07 🅤🅜\n"
+        "💎 Universal mafia 1Olmos = 0.01 🅤🅜\n"
+        "🇺🇸 USA telegram raqami = 0.1 🅤🅜\n\n"
+        "📌 p - Premium\ns - Stars\nb - Bot puli\no - Olmos\nu - USA\n\n\n Harid qilmoqchi boʻlgan maxsulotingizni oʻziga biriktirilgan lotin va kichik harflarda yozing eslatib oʻtamiz harid qilingandan soʻng bekor qilishning iloji yoʻq. Agar savollar boʻlsa avval adminlar bilan bogʻlanishni tafsiya qilib qolamiz"
     )
 
     await m.answer(text)
 
 # ───────── SHOP ITEMS ─────────
-@dp.message(F.text.in_(["1", "2", "3", "4", "5"]))
+@dp.message(F.text.in_(["p", "s", "b", "o", "u"]))
 async def shop_numbers(m: Message):
     if m.chat.type != "private":
         return
@@ -112,11 +112,11 @@ async def shop_numbers(m: Message):
         return
 
     products = {
-        "1": ("🎟 3 oylik Premium", 2),
-        "2": ("⭐ 50 Stars", 0.15),
-        "3": ("🪙 10k Bot puli", 0.07),
-        "4": ("💎 1 ta Olmos", 0.01),
-        "5": ("🇺🇸 USA Telegram raqami", 0.1)
+        "p": ("🎟 3 oylik Premium", 2),
+        "s": ("⭐ 50 Stars", 0.15),
+        "b": ("🪙 10k Bot puli", 0.07),
+        "o": ("💎 1 ta Olmos", 0.01),
+        "u": ("🇺🇸 USA Telegram raqami", 0.1)
     }
 
     name, price = products[m.text]
@@ -127,7 +127,7 @@ async def shop_numbers(m: Message):
     if bal < price:
         del shop_state[m.from_user.id]
         return await m.answer(
-            f"❌ Balansingizda mablagʻ yetarli emas.\n"
+            f"❌ Balansingizda mablagʻ yetarli emas.\n\n"
             f"Kerak: {price} 🅤🅜\n"
             f"Sizda: {bal} 🅤🅜"
         )
@@ -158,7 +158,12 @@ async def shop_numbers(m: Message):
 @dp.callback_query(F.data == "buy_um")
 async def buy_um(c: CallbackQuery):
     buy_state[c.from_user.id] = "amount"
-    await c.message.edit_text("💰Harid qilmoqchi boʻlgan miqdoringizni kiriting")
+    await c.message.edit_text("Siz oʻz hisobingizga 🅤🅜 sotib olmoqdasiz\n\n"  
+"1🅤🅜 = 100000 soʻm\n"  
+"minimum: 0.01\n"  
+"Karta: 9860196619854934\n"  
+"Egasi: M.N\n\n"  
+"💰 Harid qilmoqchi boʻlgan 🅤🅜 miqdoringizni kiriting")
     await c.answer()
 
 # ───────── AMOUNT (FIXED /ma CONFLICT) ─────────
@@ -170,13 +175,10 @@ async def amount_handler(m: Message):
     if buy_state[m.from_user.id] != "amount":
         return
 
-    if m.text in ["1", "2", "3", "4", "5"]:
-        return
-
     try:
         amount = float(m.text)
     except:
-        return await m.answer("❌ Son kiriting")
+        return await m.answer("Iltimos soʻralgan birlikda kiriting")
 
     if amount < 0.01:
         return await m.answer("❌ Min 0.01")
@@ -229,7 +231,7 @@ async def no(c: CallbackQuery):
 
     uid = int(c.data.split("_")[1])
 
-    await bot.send_message(uid, "❌ Rad etildi")
+    await bot.send_message(uid, "❌ Toʻlov etildi shikoyatlarni adminlarga yuboring")
 
     await c.message.edit_reply_markup()
 
@@ -240,12 +242,12 @@ async def ma(m: Message):
         return
 
     if not m.reply_to_message:
-        return await m.reply("❌ Reply qiling")
+        return await m.reply(" Reply qiling")
 
     try:
         amount = float(m.text.split()[1])
     except:
-        return await m.reply("❌ /ma 1.5 shaklida yozing")
+        return await m.reply(" /ma 1.5 shaklida yozing")
 
     sender = m.from_user.id
     receiver = m.reply_to_message.from_user.id
@@ -253,12 +255,17 @@ async def ma(m: Message):
     bal = await get_balance(sender)
 
     if bal < amount:
-        return await m.reply("❌ Yetarli balans yo‘q")
+        return await m.reply("❌ Sizning hisobingizda yetarli balans yo‘q")
 
     await change_balance(sender, -amount)
     await change_balance(receiver, amount)
 
-    await m.reply(f"💸 O‘tkazma {amount} 🅤🅜")
+    await m.reply(await m.reply(
+    f"💸 O‘tkazma\n\n"
+    f"👤 {m.from_user.full_name} dan\n"
+    f"👤 {m.reply_to_message.from_user.full_name} ga\n"
+    f"💰 {amount} 🅤🅜"
+))
 
 # ───────── WEBHOOK ─────────
 @app.on_event("startup")
