@@ -72,11 +72,11 @@ async def profil(m: Message):
 
     await m.answer(
         f"👤 {m.from_user.full_name}\nHisob: {bal} 🅤🅜",
-        reply_markup={
-            "inline_keyboard": [[
-                {"text": "🅤🅜 sotib olish", "callback_data": "buy_um"}
-            ]]
-        }
+        from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+kb = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="🛒 Do‘kon", callback_data="shop")]
+])
     )
 
 # ───────── SHOP ─────────
@@ -114,7 +114,7 @@ async def buy_um(c: CallbackQuery):
     buy_state[c.from_user.id] = "amount"
     await c.message.edit_text("💰 Miqdor kiriting (min 0.01)")
 
-@dp.message()
+@dp.message(F.text)
 async def amount_handler(m: Message):
     if m.from_user.id not in buy_state:
         return
