@@ -222,7 +222,7 @@ async def no(c: CallbackQuery):
 # ───────── /ma ─────────
 @dp.message(Command("ma"))
 async def ma(m: Message):
-    if m.chat.id != ASOSIY_ID:
+    if m.chat.type not in ["group", "supergroup"]:
         return
 
     if not m.reply_to_message:
@@ -249,8 +249,7 @@ async def ma(m: Message):
 
     await m.reply(
         f"💸 O‘tkazma\n{m.from_user.full_name} ➝ {m.reply_to_message.from_user.full_name}\n{amount} 🅤🅜"
-    )
-
+        )
 # ───────── WEBHOOK ─────────
 @app.on_event("startup")
 async def startup():
