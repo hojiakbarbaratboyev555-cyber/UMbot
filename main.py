@@ -10,7 +10,7 @@ from aiogram.filters import Command, CommandStart
 
 # ───────── CONFIG ─────────
 BOT_TOKEN = "8139143734:AAGAIrIxS_etgzNF92ADU36lVpiIUZ6bQ-k"
-ADMIN_ID = -1003881398546
+ADMIN_ID = 8223476380
 GROUP_ID = -1003680334929
 WEBHOOK_HOST = "https://umbot-foen.onrender.com"
 
