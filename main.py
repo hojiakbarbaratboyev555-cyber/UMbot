@@ -79,6 +79,7 @@ reply_markup={
         [{"text": "🛒 Do‘kon", "callback_data": "shop"}]
     ]
 }
+    )
 # ───────── SHOP ─────────
 @dp.message(Command("shop"))
 async def shop(m: Message):
