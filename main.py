@@ -155,13 +155,19 @@ async def receipt(m: Message):
     amount = buy_state[m.from_user.id]
     del buy_state[m.from_user.id]
 
-    await bot.send_photo(
-        GROUP_ID,
-        m.photo[-1].file_id,
-        caption=f"🧾 To‘lov\nUser: {m.from_user.full_name}\nID: {m.from_user.id}\n{amount} 🅤🅜"
-    )
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+    [
+        InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"ok_{m.from_user.id}_{amount}"),
+        InlineKeyboardButton(text="❌ Rad etish", callback_data=f"no_{m.from_user.id}")
+    ]
+])
 
-    await m.answer("⏳ Tekshiruvga yuborildi")
+await bot.send_photo(
+    GROUP_ID,
+    m.photo[-1].file_id,
+    caption=f"🧾 To‘lov\nUser: {m.from_user.full_name}\nID: {m.from_user.id}\n{amount} 🅤🅜",
+    reply_markup=kb
+)
 
 # ───────── APPROVE ─────────
 @dp.callback_query(F.data.startswith("ok_"))
