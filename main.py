@@ -94,39 +94,6 @@ async def shop(m: Message):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🛒 Do‘kon", callback_data="shop")]
     ])
-
-    await m.answer(
-        f"Hisob: {bal} 🅤🅜",
-        reply_markup=kb
-    )
-
-@dp.callback_query(F.data == "shop")
-async def shop_open(c: CallbackQuery):
-    @dp.callback_query(F.data == "p1")
-async def p1(c: CallbackQuery):
-    await c.answer()
-    await c.message.answer("🎟 Premium = 2 🅤🅜 tanlandi")
-
-@dp.callback_query(F.data == "p2")
-async def p2(c: CallbackQuery):
-    await c.answer()
-    await c.message.answer("⭐ Stars = 0.15 🅤🅜 tanlandi")
-
-@dp.callback_query(F.data == "p3")
-async def p3(c: CallbackQuery):
-    await c.answer()
-    await c.message.answer("🪙 Bot puli = 0.07 🅤🅜 tanlandi")
-
-@dp.callback_query(F.data == "p4")
-async def p4(c: CallbackQuery):
-    await c.answer()
-    await c.message.answer("💎 Olmos = 0.01 🅤🅜 tanlandi")
-
-@dp.callback_query(F.data == "p5")
-async def p5(c: CallbackQuery):
-    await c.answer()
-    await c.message.answer("🇺🇸 USA = 0.1 🅤🅜 tanlandi")
-
     await c.answer()  # 🔥 FIX (MUHIM)
 
     kb = InlineKeyboardMarkup(inline_keyboard=[
