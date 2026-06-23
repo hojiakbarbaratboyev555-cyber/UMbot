@@ -67,23 +67,6 @@ async def start(m: Message):
     await get_balance(m.from_user.id)
     await m.answer(f"Assalomu alaykum {m.from_user.full_name}")
 
-# ───────── PROFIL ─────────
-@dp.message(Command("profil"))
-async def profil(m: Message):
-    if m.chat.type != "private":
-        return
-
-    bal = await get_balance(m.from_user.id)
-
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🅤🅜 sotib olish", callback_data="buy_um")]
-    ])
-
-    await m.answer(
-        f"👤 {m.from_user.full_name}\nHisob: {bal} 🅤🅜",
-        reply_markup=kb
-    )
-
 # ───────── SHOP ─────────
 @dp.message(Command("shop"))
 async def shop(m: Message):
@@ -94,46 +77,71 @@ async def shop(m: Message):
 
     text = (
         "🛒 DO‘KON NARXLARI\n\n"
-        "🎟 Premium = 2 🅤🅜\nBu boʻlimda sizga 3 oylik premium taqdim etiladi\n\n"
-        "⭐ 50ta Stars = 0.15 🅤🅜\nBunda siz 50ta starsni 0.15🅤🅜 ga almashtirasiz\n\n"
-        "🪙 Bot puli = 0.07 🅤🅜\nBu boʻlimda Universal mafia botining shaxsiy pul birligiga almashtirasiz 🅤🅜 ni 10=0.07\n\n"
-        "💎 Olmos = 0.01 🅤🅜\nHuddi shu botning olmos tizimi 1ta olmos 0.01🅤🅜\n\n"
-        "🇺🇸 USA = 0.1 🅤🅜\n1ta Amerika telegram raqami 0.1🅤🅜\n\n\n"
-        "──────────────────\n"
-        "Bu yerda har bir maxsulot uchun ajratilgan raqamlar ularni kiriting va sovgʻalarga ega boʻling (Eslatma:Raqamni kiritishingiz bilan buyurtma qabul qilinadi bekor qilib boʻlmaydi!)\n📌 Tanlang:\n"
-        "1 - Premium\n"
-        "2 - Stars\n"
-        "3 - Bot puli\n"
-        "4 - Olmos\n"
-        "5 - USA"
+        "🎟 Premium = 2 🅤🅜\n"
+        "⭐ Stars = 0.15 🅤🅜\n"
+        "🪙 Bot puli = 0.07 🅤🅜\n"
+        "💎 Olmos = 0.01 🅤🅜\n"
+        "🇺🇸 USA = 0.1 🅤🅜\n\n"
+        "📌 1 - Premium\n2 - Stars\n3 - Bot puli\n4 - Olmos\n5 - USA"
     )
 
     await m.answer(text)
 
+# ───────── SHOP ORDER ─────────
+@dp.message(F.text.in_(["1", "2", "3", "4", "5"]))
+async def shop_order(m: Message):
+
+    if m.chat.type != "private":
+        return
+
+    if not shop_state.get(m.from_user.id):
+        return
+
+    items = {
+        "1": "Premium",
+        "2": "Stars",
+        "3": "Bot puli",
+        "4": "Olmos",
+        "5": "USA"
+    }
+
+    await bot.send_message(
+        GROUP_ID,
+        f"🛒 BUYURTMA\n\n"
+        f"👤 {m.from_user.full_name}\n"
+        f"🆔 {m.from_user.id}\n"
+        f"📦 {items[m.text]}"
+    )
+
+    await m.answer("✅ Buyurtma qabul qilindi")
+
 # ───────── BUY UM ─────────
+@dp.message(Command("profil"))
+async def profil(m: Message):
+    bal = await get_balance(m.from_user.id)
+
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🅤🅜 sotib olish", callback_data="buy_um")]
+    ])
+
+    await m.answer(f"👤 {m.from_user.full_name}\n💰 {bal} 🅤🅜", reply_markup=kb)
+
 @dp.callback_query(F.data == "buy_um")
 async def buy_um(c: CallbackQuery):
     buy_state[c.from_user.id] = "amount"
-    await c.message.edit_text(
-        "Siz oʻz hisobingizga 🅤🅜 sotib olmoqdasiz\n\n"
-        "1🅤🅜 = 100000 soʻm\n"
-        "minimum: 0.01\n"
-        "Karta: 9860196619854934\n"
-        "Egasi: M.N\n\n"
-        "💰 Miqdorni kiriting"
-    )
+    await c.message.edit_text("💰 Miqdor kiriting:")
     await c.answer()
 
-# ───────── AMOUNT (FIXED) ─────────
-@dp.message(F.text)
+# ───────── AMOUNT (FIXED MINIMAL) ─────────
+@dp.message(F.text & ~F.text.startswith("/"))
 async def amount_handler(m: Message):
+
     if m.from_user.id not in buy_state:
         return
 
     if buy_state[m.from_user.id] != "amount":
         return
 
-    # shop 1-5 bilan konflikt bo‘lmasligi uchun
     if m.text in ["1", "2", "3", "4", "5"]:
         return
 
@@ -143,7 +151,7 @@ async def amount_handler(m: Message):
         return await m.answer("❌ Son kiriting")
 
     if amount < 0.01:
-        return await m.answer("❌ Min 0.01 🅤🅜")
+        return await m.answer("❌ Min 0.01")
 
     buy_state[m.from_user.id] = amount
     await m.answer("📸 Chek yuboring")
@@ -151,6 +159,7 @@ async def amount_handler(m: Message):
 # ───────── RECEIPT ─────────
 @dp.message(F.photo)
 async def receipt(m: Message):
+
     if m.from_user.id not in buy_state:
         return
 
@@ -167,61 +176,42 @@ async def receipt(m: Message):
     await bot.send_photo(
         GROUP_ID,
         m.photo[-1].file_id,
-        caption=f"🧾 To‘lov\nUser: {m.from_user.full_name}\nID: {m.from_user.id}\n{amount} 🅤🅜",
+        caption=f"🧾 To‘lov\n{m.from_user.full_name}\n{amount} 🅤🅜",
         reply_markup=kb
     )
 
     await m.answer("⏳ Tekshiruvga yuborildi")
 
-# ───────── SHOP ITEMS (FIXED) ─────────
-@dp.message(F.text.in_(["1", "2", "3", "4", "5"]))
-async def shop_numbers(m: Message):
-    if m.chat.type != "private":
-        return
-
-    if not shop_state.get(m.from_user.id):
-        return
-
-    data = {
-        "1": "🎟 3 oylik Premium\nNarx: 2🅤🅜",
-        "2": "⭐ 50 Stars\nNarx: 0.15🅤🅜",
-        "3": "🪙 10k Bot puli\nNarx: 0.07🅤🅜",
-        "4": "💎 1ta Olmos\nNarx: 0.01🅤🅜",
-        "5": "🇺🇸 USA tg \nNarx: 0.1🅤🅜"
-    }
-
-    await m.answer(data[m.text])
-
 # ───────── APPROVE ─────────
 @dp.callback_query(F.data.startswith("ok_"))
 async def ok(c: CallbackQuery):
+
     await c.answer()
 
     _, uid, amount = c.data.split("_")
 
     await change_balance(int(uid), float(amount))
 
-    await bot.send_message(
-        int(uid),
-        f"Haridingiz tasdiqlandi ✅\n+{amount} 🅤🅜"
-    )
+    await bot.send_message(int(uid), f"✅ Tasdiqlandi +{amount} 🅤🅜")
 
     await c.message.edit_reply_markup()
 
 # ───────── REJECT ─────────
 @dp.callback_query(F.data.startswith("no_"))
 async def no(c: CallbackQuery):
+
     await c.answer()
 
     uid = int(c.data.split("_")[1])
 
-    await bot.send_message(uid, "Haridingiz tasdiqlanmadi ❌")
+    await bot.send_message(uid, "❌ Rad etildi")
 
     await c.message.edit_reply_markup()
 
-# ───────── /ma ─────────
-@dp.message(Command("ma"))
+# ───────── /ma (FIXED ONLY) ─────────
+@dp.message(F.text.startswith("/ma"))
 async def ma(m: Message):
+
     if m.chat.type not in ["group", "supergroup"]:
         return
 
@@ -231,25 +221,21 @@ async def ma(m: Message):
     try:
         amount = float(m.text.split()[1])
     except:
-        return await m.reply("❌ Miqdor kiriting")
-
-    if amount < 0.0001:
-        return await m.reply("❌ Min 0.0001")
+        return await m.reply("❌ /ma 1.5 shaklida yozing")
 
     sender = m.from_user.id
     receiver = m.reply_to_message.from_user.id
 
-    s_bal = await get_balance(sender)
+    bal = await get_balance(sender)
 
-    if s_bal < amount:
+    if bal < amount:
         return await m.reply("❌ Yetarli balans yo‘q")
 
     await change_balance(sender, -amount)
     await change_balance(receiver, amount)
 
-    await m.reply(
-        f"💸 O‘tkazma\n{m.from_user.full_name} ➝ {m.reply_to_message.from_user.full_name}\n{amount} 🅤🅜"
-        )
+    await m.reply(f"💸 {amount} 🅤🅜 o‘tkazildi")
+
 # ───────── WEBHOOK ─────────
 @app.on_event("startup")
 async def startup():
@@ -267,8 +253,3 @@ async def webhook(req: Request):
 @app.get("/")
 async def home():
     return {"status": "running"}
-
-# ───────── RUN ─────────
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 10000)))
