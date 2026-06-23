@@ -74,11 +74,11 @@ async def profil(m: Message):
         f"👤 {m.from_user.full_name}\nHisob: {bal} 🅤🅜",
         from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-kb = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text="🛒 Do‘kon", callback_data="shop")]
-])
-    )
-
+reply_markup={
+    "inline_keyboard": [
+        [{"text": "🛒 Do‘kon", "callback_data": "shop"}]
+    ]
+}
 # ───────── SHOP ─────────
 @dp.message(Command("shop"))
 async def shop(m: Message):
