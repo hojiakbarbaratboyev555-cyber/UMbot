@@ -161,8 +161,7 @@ async def receipt(m: Message):
         InlineKeyboardButton(text="❌ Rad etish", callback_data=f"no_{m.from_user.id}")
     ]
 ])
-
-await bot.send_photo(
+    await bot.send_photo(
     GROUP_ID,
     m.photo[-1].file_id,
     caption=f"🧾 To‘lov\nUser: {m.from_user.full_name}\nID: {m.from_user.id}\n{amount} 🅤🅜",
