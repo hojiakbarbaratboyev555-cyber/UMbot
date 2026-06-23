@@ -10,7 +10,7 @@ from aiogram.filters import Command, CommandStart
 
 # ───────── CONFIG ─────────
 BOT_TOKEN = "8139143734:AAGAIrIxS_etgzNF92ADU36lVpiIUZ6bQ-k"
-ADMIN_ID = 8223476380
+ADMIN_ID = -1003881398546
 GROUP_ID = -1003680334929
 WEBHOOK_HOST = "https://umbot-foen.onrender.com"
 
@@ -95,6 +95,9 @@ async def shop(m: Message):
 
 @dp.callback_query(F.data == "shop")
 async def shop_open(c: CallbackQuery):
+
+    await c.answer()  # 🔥 FIX (MUHIM)
+
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🎟 Premium = 2 🅤🅜", callback_data="p1")],
         [InlineKeyboardButton(text="⭐ Stars = 0.15", callback_data="p2")],
@@ -114,6 +117,7 @@ async def buy_um(c: CallbackQuery):
     buy_state[c.from_user.id] = "amount"
     await c.message.edit_text("💰 Miqdor kiriting (min 0.01)")
 
+# ───────── AMOUNT ─────────
 @dp.message(F.text)
 async def amount_handler(m: Message):
     if m.from_user.id not in buy_state:
@@ -133,26 +137,21 @@ async def amount_handler(m: Message):
     buy_state[m.from_user.id] = amount
     await m.answer("📸 Chek yuboring")
 
+# ───────── RECEIPT ─────────
 @dp.message(F.photo)
 async def receipt(m: Message):
+    print("RECEIPT TRIGGERED")  # 🔥 DEBUG FIX
+
     if m.from_user.id not in buy_state:
         return
 
     amount = buy_state[m.from_user.id]
     del buy_state[m.from_user.id]
 
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="✅", callback_data=f"ok_{m.from_user.id}_{amount}"),
-            InlineKeyboardButton(text="❌", callback_data=f"no_{m.from_user.id}")
-        ]
-    ])
-
     await bot.send_photo(
         GROUP_ID,
         m.photo[-1].file_id,
-        caption=f"🧾 To‘lov\nUser: {m.from_user.full_name}\nID: {m.from_user.id}\n{amount} 🅤🅜",
-        reply_markup=kb
+        caption=f"🧾 To‘lov\nUser: {m.from_user.full_name}\nID: {m.from_user.id}\n{amount} 🅤🅜"
     )
 
     await m.answer("⏳ Tekshiruvga yuborildi")
@@ -160,25 +159,33 @@ async def receipt(m: Message):
 # ───────── APPROVE ─────────
 @dp.callback_query(F.data.startswith("ok_"))
 async def ok(c: CallbackQuery):
+
+    await c.answer()  # 🔥 FIX
+
     _, uid, amount = c.data.split("_")
 
     await change_balance(int(uid), float(amount))
 
-    await bot.send_message(int(uid),
-        f"Haridingiz tasdiqlandi ✅\n+{amount} 🅤🅜")
+    await bot.send_message(
+        int(uid),
+        f"Haridingiz tasdiqlandi ✅\n+{amount} 🅤🅜"
+    )
 
     await c.message.edit_reply_markup()
 
 # ───────── REJECT ─────────
 @dp.callback_query(F.data.startswith("no_"))
 async def no(c: CallbackQuery):
+
+    await c.answer()  # 🔥 FIX
+
     uid = int(c.data.split("_")[1])
 
     await bot.send_message(uid, "Haridingiz tasdiqlanmadi ❌")
 
     await c.message.edit_reply_markup()
 
-# ───────── /ma TRANSFER ─────────
+# ───────── /ma ─────────
 @dp.message(Command("ma"))
 async def ma(m: Message):
     if m.chat.id != GROUP_ID:
