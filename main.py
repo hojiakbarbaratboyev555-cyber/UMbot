@@ -169,20 +169,22 @@ async def buy_um(c: CallbackQuery):
 # ───────── AMOUNT (FIXED /ma CONFLICT) ─────────
 @dp.message(F.text & ~F.text.startswith("/"))
 async def amount_handler(m: Message):
-    if m.from_user.id not in buy_state:
+    user_id = m.from_user.id
+
+    if buy_state.get(user_id) != "amount":
         return
 
-    if buy_state[m.from_user.id] != "amount":
-        return
-        except:
-    return await m.answer("")
+    try:
+        amount = float(m.text)
+    except ValueError:
+        return await m.answer("❌ Raqam kiriting (masalan: 1.5)")
 
     if amount < 0.01:
         return await m.answer("❌ Min 0.01")
 
-    buy_state[m.from_user.id] = amount
-    await m.answer("📸Toʻlovni amalga oshiring va Chekni yuboring")
+    buy_state[user_id] = amount
 
+    await m.answer("📸 Toʻlovni amalga oshiring va chekni yuboring")
 # ───────── RECEIPT ─────────
 @dp.message(F.photo)
 async def receipt(m: Message):
