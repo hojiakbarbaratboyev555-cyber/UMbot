@@ -5,7 +5,7 @@ import logging
 import aiosqlite
 from fastapi import FastAPI, Request
 from aiogram import Bot, Dispatcher, F
-from aiogram.types import Message, CallbackQuery, Update
+from aiogram.types import Message, CallbackQuery, Update, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters import Command, CommandStart
 
 # ───────── CONFIG ─────────
@@ -70,13 +70,13 @@ async def start(m: Message):
 async def profil(m: Message):
     bal = await get_balance(m.from_user.id)
 
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🅤🅜 sotib olish", callback_data="buy_um")]
+    ])
+
     await m.answer(
         f"👤 {m.from_user.full_name}\nHisob: {bal} 🅤🅜",
-        reply_markup={
-            "inline_keyboard": [[
-                {"text": "🅤🅜 sotib olish", "callback_data": "buy_um"}
-            ]]
-        }
+        reply_markup=kb
     )
 
 # ───────── SHOP ─────────
@@ -84,28 +84,28 @@ async def profil(m: Message):
 async def shop(m: Message):
     bal = await get_balance(m.from_user.id)
 
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🛒 Do‘kon", callback_data="shop")]
+    ])
+
     await m.answer(
         f"Hisob: {bal} 🅤🅜",
-        reply_markup={
-            "inline_keyboard": [[
-                {"text": "🛒 Do‘kon", "callback_data": "shop"}
-            ]]
-        }
+        reply_markup=kb
     )
 
 @dp.callback_query(F.data == "shop")
 async def shop_open(c: CallbackQuery):
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🎟 Premium = 2 🅤🅜", callback_data="p1")],
+        [InlineKeyboardButton(text="⭐ Stars = 0.15", callback_data="p2")],
+        [InlineKeyboardButton(text="🪙 Bot puli = 0.07", callback_data="p3")],
+        [InlineKeyboardButton(text="💎 Olmos = 0.01", callback_data="p4")],
+        [InlineKeyboardButton(text="🇺🇸 USA = 0.1", callback_data="p5")]
+    ])
+
     await c.message.edit_text(
         "🛒 DO‘KON",
-        reply_markup={
-            "inline_keyboard": [
-                [{"text": "🎟 Premium = 2 🅤🅜", "callback_data": "p1"}],
-                [{"text": "⭐ Stars = 0.15", "callback_data": "p2"}],
-                [{"text": "🪙 Bot puli = 0.07", "callback_data": "p3"}],
-                [{"text": "💎 Olmos = 0.01", "callback_data": "p4"}],
-                [{"text": "🇺🇸 USA = 0.1", "callback_data": "p5"}]
-            ]
-        }
+        reply_markup=kb
     )
 
 # ───────── BUY UM ─────────
@@ -114,9 +114,12 @@ async def buy_um(c: CallbackQuery):
     buy_state[c.from_user.id] = "amount"
     await c.message.edit_text("💰 Miqdor kiriting (min 0.01)")
 
-@dp.message()
+@dp.message(F.text)
 async def amount_handler(m: Message):
     if m.from_user.id not in buy_state:
+        return
+
+    if buy_state[m.from_user.id] != "amount":
         return
 
     try:
@@ -138,12 +141,12 @@ async def receipt(m: Message):
     amount = buy_state[m.from_user.id]
     del buy_state[m.from_user.id]
 
-    kb = {
-        "inline_keyboard": [[
-            {"text": "✅", "callback_data": f"ok_{m.from_user.id}_{amount}"},
-            {"text": "❌", "callback_data": f"no_{m.from_user.id}"}
-        ]]
-    }
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="✅", callback_data=f"ok_{m.from_user.id}_{amount}"),
+            InlineKeyboardButton(text="❌", callback_data=f"no_{m.from_user.id}")
+        ]
+    ])
 
     await bot.send_photo(
         GROUP_ID,
