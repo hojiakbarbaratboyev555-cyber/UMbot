@@ -9,7 +9,7 @@ from aiogram.types import Message, CallbackQuery, Update, InlineKeyboardMarkup, 
 from aiogram.filters import Command, CommandStart
 
 # ───────── CONFIG ─────────
-BOT_TOKEN = "8139143734:AAGHmMkGbqUDXfyPpcTo7lqRbVVBAPM6swM"
+BOT_TOKEN = "8139143734:AAEkx2UFdqacm3UF82yAmwT968rnUFwDCWQ"
 GROUP_ID = -1003881398546
 WEBHOOK_HOST = "https://umbot-foen.onrender.com"
 
