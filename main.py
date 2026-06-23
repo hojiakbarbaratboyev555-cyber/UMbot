@@ -9,8 +9,7 @@ from aiogram.types import Message, CallbackQuery, Update, InlineKeyboardMarkup, 
 from aiogram.filters import Command, CommandStart
 
 # ───────── CONFIG ─────────
-BOT_TOKEN = "8139143734:AAGHmMkGbqUDXfyPpcTo7lqRbVVBAPM6swM-k"
-ADMIN_ID = 8223476380
+BOT_TOKEN = "8139143734:AAGHmMkGbqUDXfyPpcTo7lqRbVVBAPM6swM"
 GROUP_ID = -1003881398546
 WEBHOOK_HOST = "https://umbot-foen.onrender.com"
 
@@ -66,6 +65,23 @@ async def start(m: Message):
     await get_balance(m.from_user.id)
     await m.answer(f"Assalomu alaykum {m.from_user.full_name}")
 
+# ───────── PROFIL ─────────
+@dp.message(Command("profil"))
+async def profil(m: Message):
+    if m.chat.type != "private":
+        return
+
+    bal = await get_balance(m.from_user.id)
+
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🅤🅜 sotib olish", callback_data="buy_um")]
+    ])
+
+    await m.answer(
+        f"👤 {m.from_user.full_name}\nHisob: {bal} 🅤🅜",
+        reply_markup=kb
+    )
+
 # ───────── SHOP ─────────
 @dp.message(Command("shop"))
 async def shop(m: Message):
@@ -86,55 +102,35 @@ async def shop(m: Message):
 
     await m.answer(text)
 
-# ───────── SHOP ORDER ─────────
-@dp.message(F.text.in_(["1", "2", "3", "4", "5"]))
-async def shop_order(m: Message):
-
+# ───────── SHOP ITEMS (FIXED) ─────────
+@dp.message(F.text.regexp(r"^[1-5]$"))
+async def shop_numbers(m: Message):
     if m.chat.type != "private":
         return
 
     if not shop_state.get(m.from_user.id):
         return
 
-    items = {
-        "1": "Premium",
-        "2": "Stars",
-        "3": "Bot puli",
-        "4": "Olmos",
-        "5": "USA"
+    data = {
+        "1": "🎟 Premium\nNarx: 2🅤🅜",
+        "2": "⭐ Stars\nNarx: 0.15🅤🅜",
+        "3": "🪙 Bot puli\nNarx: 0.07🅤🅜",
+        "4": "💎 Olmos\nNarx: 0.01🅤🅜",
+        "5": "🇺🇸 USA\nNarx: 0.1🅤🅜"
     }
 
-    await bot.send_message(
-        GROUP_ID,
-        f"🛒 BUYURTMA\n\n"
-        f"👤 {m.from_user.full_name}\n"
-        f"🆔 {m.from_user.id}\n"
-        f"📦 {items[m.text]}"
-    )
-
-    await m.answer("✅ Buyurtma qabul qilindi")
+    await m.answer(data[m.text])
 
 # ───────── BUY UM ─────────
-@dp.message(Command("profil"))
-async def profil(m: Message):
-    bal = await get_balance(m.from_user.id)
-
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🅤🅜 sotib olish", callback_data="buy_um")]
-    ])
-
-    await m.answer(f"👤 {m.from_user.full_name}\n💰 {bal} 🅤🅜", reply_markup=kb)
-
 @dp.callback_query(F.data == "buy_um")
 async def buy_um(c: CallbackQuery):
     buy_state[c.from_user.id] = "amount"
-    await c.message.edit_text("💰 Miqdor kiriting:")
+    await c.message.edit_text("💰 Miqdor kiriting")
     await c.answer()
 
-# ───────── AMOUNT (FIXED MINIMAL) ─────────
+# ───────── AMOUNT (FIXED /ma CONFLICT) ─────────
 @dp.message(F.text & ~F.text.startswith("/"))
 async def amount_handler(m: Message):
-
     if m.from_user.id not in buy_state:
         return
 
@@ -153,12 +149,11 @@ async def amount_handler(m: Message):
         return await m.answer("❌ Min 0.01")
 
     buy_state[m.from_user.id] = amount
-    await m.answer("📸 Chek yuboring")
+    await m.answer("📸 Chekni yuboring")
 
 # ───────── RECEIPT ─────────
 @dp.message(F.photo)
 async def receipt(m: Message):
-
     if m.from_user.id not in buy_state:
         return
 
@@ -167,8 +162,8 @@ async def receipt(m: Message):
 
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"ok_{m.from_user.id}_{amount}"),
-            InlineKeyboardButton(text="❌ Rad etish", callback_data=f"no_{m.from_user.id}")
+            InlineKeyboardButton(text="✅", callback_data=f"ok_{m.from_user.id}_{amount}"),
+            InlineKeyboardButton(text="❌", callback_data=f"no_{m.from_user.id}")
         ]
     ])
 
@@ -179,12 +174,11 @@ async def receipt(m: Message):
         reply_markup=kb
     )
 
-    await m.answer("⏳ Tekshiruvga yuborildi")
+    await m.answer("⏳ Tekshiruvga yuborildi Adminlar javobini kuting!")
 
 # ───────── APPROVE ─────────
 @dp.callback_query(F.data.startswith("ok_"))
 async def ok(c: CallbackQuery):
-
     await c.answer()
 
     _, uid, amount = c.data.split("_")
@@ -198,7 +192,6 @@ async def ok(c: CallbackQuery):
 # ───────── REJECT ─────────
 @dp.callback_query(F.data.startswith("no_"))
 async def no(c: CallbackQuery):
-
     await c.answer()
 
     uid = int(c.data.split("_")[1])
@@ -207,10 +200,9 @@ async def no(c: CallbackQuery):
 
     await c.message.edit_reply_markup()
 
-# ───────── /ma (FIXED ONLY) ─────────
+# ───────── /ma FIXED ─────────
 @dp.message(F.text.startswith("/ma"))
 async def ma(m: Message):
-
     if m.chat.type not in ["group", "supergroup"]:
         return
 
@@ -233,7 +225,7 @@ async def ma(m: Message):
     await change_balance(sender, -amount)
     await change_balance(receiver, amount)
 
-    await m.reply(f"💸 {amount} 🅤🅜 o‘tkazildi")
+    await m.reply(f"💸 O‘tkazma {amount} 🅤🅜")
 
 # ───────── WEBHOOK ─────────
 @app.on_event("startup")
@@ -252,7 +244,8 @@ async def webhook(req: Request):
 @app.get("/")
 async def home():
     return {"status": "running"}
-import uvicorn
 
+# ───────── RUN ─────────
 if __name__ == "__main__":
+    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 10000)))
