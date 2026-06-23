@@ -102,7 +102,7 @@ async def shop(m: Message):
 
     await m.answer(text)
 
-# ───────── SHOP ITEMS (FIXED) ─────────
+# ───────── SHOP ITEMS ─────────
 @dp.message(F.text.in_(["1", "2", "3", "4", "5"]))
 async def shop_numbers(m: Message):
     if m.chat.type != "private":
@@ -121,42 +121,44 @@ async def shop_numbers(m: Message):
 
     name, price = products[m.text]
 
+    # Balansni tekshirish
+    bal = await get_balance(m.from_user.id)
+
+    if bal < price:
+        del shop_state[m.from_user.id]
+        return await m.answer(
+            f"❌ Balansingizda mablagʻ yetarli emas.\n"
+            f"Kerak: {price} 🅤🅜\n"
+            f"Sizda: {bal} 🅤🅜"
+        )
+
+    # Pulni yechish
+    await change_balance(m.from_user.id, -price)
+
+    # Adminlar guruhiga yuborish
     await bot.send_message(
         GROUP_ID,
         f"🛒 Yangi buyurtma\n\n"
         f"👤 {m.from_user.full_name}\n"
         f"🆔 {m.from_user.id}\n"
+        f"@{m.from_user.username}\n"
         f"📦 {name}\n"
         f"💰 Narxi: {price} 🅤🅜"
     )
 
+    # Shop holatini o'chirish
     del shop_state[m.from_user.id]
 
     await m.answer(
         "✅ Buyurtma qabul qilindi.\n"
         "Adminlar tez orada siz bilan bog'lanadi."
     )
-    if m.chat.type != "private":
-        return
-
-    if not shop_state.get(m.from_user.id):
-        return
-
-    data = {
-        "1": "🎟 Premium\nNarx: 2🅤🅜",
-        "2": "⭐ Stars\nNarx: 0.15🅤🅜",
-        "3": "🪙 Bot puli\nNarx: 0.07🅤🅜",
-        "4": "💎 Olmos\nNarx: 0.01🅤🅜",
-        "5": "🇺🇸 USA\nNarx: 0.1🅤🅜"
-    }
-
-    await m.answer(data[m.text])
 
 # ───────── BUY UM ─────────
 @dp.callback_query(F.data == "buy_um")
 async def buy_um(c: CallbackQuery):
     buy_state[c.from_user.id] = "amount"
-    await c.message.edit_text("💰 Miqdor kiriting")
+    await c.message.edit_text("💰Harid qilmoqchi boʻlgan miqdoringizni kiriting")
     await c.answer()
 
 # ───────── AMOUNT (FIXED /ma CONFLICT) ─────────
@@ -180,7 +182,7 @@ async def amount_handler(m: Message):
         return await m.answer("❌ Min 0.01")
 
     buy_state[m.from_user.id] = amount
-    await m.answer("📸 Chekni yuboring")
+    await m.answer("📸Toʻlovni amalga oshiring va Chekni yuboring")
 
 # ───────── RECEIPT ─────────
 @dp.message(F.photo)
@@ -216,7 +218,7 @@ async def ok(c: CallbackQuery):
 
     await change_balance(int(uid), float(amount))
 
-    await bot.send_message(int(uid), f"✅ Tasdiqlandi +{amount} 🅤🅜")
+    await bot.send_message(int(uid), f"✅ Tasdiqlandi Hisobingizga +{amount} 🅤🅜 muvaffaqiyatli qoʻshildi")
 
     await c.message.edit_reply_markup()
 
