@@ -94,7 +94,6 @@ async def shop(m: Message):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🛒 Do‘kon", callback_data="shop")]
     ])
-    await c.answer()  # 🔥 FIX (MUHIM)
 
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🎟 Premium = 2 🅤🅜", callback_data="p1")],
