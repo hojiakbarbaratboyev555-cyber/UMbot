@@ -175,11 +175,6 @@ async def amount_handler(m: Message):
     if buy_state[m.from_user.id] != "amount":
         return
 
-    try:
-        amount = float(m.text)
-    except:
-        return await m.answer("Iltimos soʻralgan birlikda kiriting")
-
     if amount < 0.01:
         return await m.answer("❌ Min 0.01")
 
