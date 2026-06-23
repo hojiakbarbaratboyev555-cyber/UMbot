@@ -10,8 +10,9 @@ from aiogram.filters import Command, CommandStart
 
 # ───────── CONFIG ─────────
 BOT_TOKEN = "8139143734:AAGAIrIxS_etgzNF92ADU36lVpiIUZ6bQ-k"
-ADMIN_ID = -1003881398546
-GROUP_ID = -1003680334929
+ADMIN_ID = 8223476380
+ASOSIY_ID = -1003680334929
+GROUP_ID = -1003881398546
 WEBHOOK_HOST = "https://umbot-foen.onrender.com"
 
 WEBHOOK_PATH = f"/webhook/{BOT_TOKEN}"
@@ -194,7 +195,7 @@ async def no(c: CallbackQuery):
 # ───────── /ma ─────────
 @dp.message(Command("ma"))
 async def ma(m: Message):
-    if m.chat.id != GROUP_ID:
+    if m.chat.id != ASOSIY_ID:
         return
 
     if not m.reply_to_message:
