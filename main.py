@@ -512,3 +512,7 @@ async def admin_remove_balance_cmd(message: Message, command: CommandObject, bot
         return
     telegram_id = int(parts[0])
     ok, msg = await db.admin_remove_balance(telegram)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=PORT)
