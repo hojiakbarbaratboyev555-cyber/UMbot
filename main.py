@@ -511,4 +511,4 @@ async def admin_remove_balance_cmd(message: Message, command: CommandObject, bot
         await message.answer("Miqdor musbat butun son bo'lishi kerak.")
         return
     telegram_id = int(parts[0])
-    ok, msg = await db.admin_remove_balance(telegram_
+    ok, msg = await db.admin_remove_balance(telegram)
