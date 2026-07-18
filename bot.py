@@ -48,6 +48,38 @@ async def on_shutdown(bot: Bot):
         await db.pool.close()
 
 
+async def run_webhook(bot: Bot, dp: Dispatcher):
+    """Webhook rejimini past darajadagi AppRunner/TCPSite orqali ishga tushiradi.
+
+    aiohttp'ning yuqori darajadagi web.run_app() funksiyasi ba'zi cheklangan
+    konteyner muhitlarida (masalan Render) signal boshqaruvi bilan bog'liq
+    ichki xatolik (KeyError: 'name') berishi mumkin. Shu sabab shu yerda
+    quyi darajadagi API ishlatiladi.
+    """
+    app = web.Application()
+
+    async def health_check(request):
+        return web.Response(text="OK")
+
+    app.router.add_get("/", health_check)
+
+    SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
+    setup_application(app, dp, bot=bot)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, WEBAPP_HOST, WEBAPP_PORT)
+    await site.start()
+
+    logger.info(f"Server {WEBAPP_HOST}:{WEBAPP_PORT} portida ishga tushdi")
+
+    # Dastur to'xtatilguncha (Render konteyneri o'chirilguncha) shu yerda kutadi
+    try:
+        await asyncio.Event().wait()
+    finally:
+        await runner.cleanup()
+
+
 def main():
     if not BOT_TOKEN:
         raise RuntimeError("BOT_TOKEN environment o'zgaruvchisi topilmadi (.env faylini tekshiring)")
@@ -60,16 +92,7 @@ def main():
 
     if WEBHOOK_URL:
         # --- Render (production): webhook rejimi ---
-        app = web.Application()
-
-        async def health_check(request):
-            return web.Response(text="OK")
-
-        app.router.add_get("/", health_check)
-
-        SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
-        setup_application(app, dp, bot=bot)
-        web.run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT)
+        asyncio.run(run_webhook(bot, dp))
     else:
         # --- Lokal test: polling rejimi ---
         async def _run_polling():
