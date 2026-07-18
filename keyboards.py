@@ -4,15 +4,15 @@ from aiogram.types import (
     InlineKeyboardMarkup,
     InlineKeyboardButton,
 )
-from config import SUPPORT_URL, EARN_GROUP_URL, CURRENCY_NAME
+from config import SUPPORT_URL, CURRENCY_NAME
 
 
-# --- Asosiy menyu (4 tugma, 2 qator) ---
+# --- Asosiy menyu (3 tugma) ---
 def main_menu_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="🛍 Do'kon"), KeyboardButton(text="💵 Pul ishlash")],
-            [KeyboardButton(text="👤 Hisobim"), KeyboardButton(text="☎️Qo'llab-quvvatlash")],
+            [KeyboardButton(text="🛍 Do'kon"), KeyboardButton(text="👤 Hisobim")],
+            [KeyboardButton(text="🆘 Qo'llab-quvvatlash")],
         ],
         resize_keyboard=True,
     )
@@ -20,7 +20,7 @@ def main_menu_kb() -> ReplyKeyboardMarkup:
 
 def back_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
-        keyboard=[[KeyboardButton(text="◀️ Orqaga")]],
+        keyboard=[[KeyboardButton(text="◀️ Ortga qaytish")]],
         resize_keyboard=True,
     )
 
@@ -50,7 +50,13 @@ def admin_order_kb(order_id: int) -> InlineKeyboardMarkup:
 # --- Hisobim bo'limi ---
 def account_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
-        inline_keyboard=[[InlineKeyboardButton(text="💸 O'tkazish", callback_data="transfer_start")]]
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="💳 Pul kiritish", callback_data="topup_start"),
+                InlineKeyboardButton(text="💸 Pul chiqarish", callback_data="withdraw_start"),
+            ],
+            [InlineKeyboardButton(text="🔁 O'tkazish", callback_data="transfer_start")],
+        ]
     )
 
 
@@ -66,16 +72,6 @@ def transfer_confirm_kb() -> InlineKeyboardMarkup:
     )
 
 
-# --- Pul ishlash bo'limi ---
-def earn_kb() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="👥 Telegram guruh", url=EARN_GROUP_URL)],
-            [InlineKeyboardButton(text="💳 Pul kiritish", callback_data="topup_start")],
-        ]
-    )
-
-
 # --- Admin uchun to'lov (topup) tasdiqlash ---
 def admin_topup_kb(topup_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
@@ -84,6 +80,15 @@ def admin_topup_kb(topup_id: int) -> InlineKeyboardMarkup:
                 InlineKeyboardButton(text="✅", callback_data=f"topup_approve:{topup_id}"),
                 InlineKeyboardButton(text="❌", callback_data=f"topup_reject:{topup_id}"),
             ]
+        ]
+    )
+
+
+# --- Admin uchun pul chiqarish tasdiqlash ---
+def admin_withdraw_kb(withdrawal_id: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="✅", callback_data=f"withdraw_approve:{withdrawal_id}")]
         ]
     )
 
