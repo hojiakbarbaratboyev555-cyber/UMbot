@@ -28,7 +28,7 @@ async def init_db():
 
             CREATE TABLE IF NOT EXISTS products (
                 id SERIAL PRIMARY KEY,
-                name TEXT NOT NULL,
+                name TEXT UNIQUE NOT NULL,
                 description TEXT,
                 price NUMERIC(14, 2) NOT NULL,
                 photo_file_id TEXT,
@@ -65,6 +65,23 @@ async def init_db():
             """
         )
 
+        # Eski bazalarda 'name' ustida unique cheklov bo'lmasligi mumkin — xavfsiz qo'shamiz
+        try:
+            await conn.execute(
+                """
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM pg_constraint WHERE conname = 'products_name_key'
+                    ) THEN
+                        ALTER TABLE products ADD CONSTRAINT products_name_key UNIQUE (name);
+                    END IF;
+                END $$;
+                """
+            )
+        except Exception:
+            pass  # Agar takrorlanuvchi nomlar bo'lsa, qo'lda tozalash kerak bo'ladi
+
         # Admin uchun maxsus 007 hisobini kafolatlash
         admin_exists = await conn.fetchval(
             "SELECT 1 FROM users WHERE user_id = $1", ADMIN_ID
@@ -79,6 +96,43 @@ async def init_db():
                 """,
                 ADMIN_ID, ADMIN_ACCOUNT_NUMBER, "Admin", "admin",
             )
+
+    await sync_products_from_code()
+
+
+async def sync_products_from_code():
+    """products.py faylidagi PRODUCTS ro'yxatini bazaga sinxronlaydi.
+
+    Ro'yxatdagi mahsulotlar qo'shiladi/yangilanadi (nomi bo'yicha).
+    Ro'yxatda yo'q, lekin bazada mavjud mahsulotlar o'chirilmaydi — faqat
+    'active=FALSE' qilinadi (chunki eski buyurtmalar shu mahsulotga bog'liq bo'lishi mumkin).
+    """
+    from products import PRODUCTS
+
+    async with pool.acquire() as conn:
+        current_names = [p["name"] for p in PRODUCTS]
+
+        for p in PRODUCTS:
+            await conn.execute(
+                """
+                INSERT INTO products (name, description, price, photo_file_id, active)
+                VALUES ($1, $2, $3, $4, TRUE)
+                ON CONFLICT (name) DO UPDATE SET
+                    description = EXCLUDED.description,
+                    price = EXCLUDED.price,
+                    photo_file_id = EXCLUDED.photo_file_id,
+                    active = TRUE
+                """,
+                p["name"], p.get("description"), p["price"], p.get("photo_file_id"),
+            )
+
+        if current_names:
+            await conn.execute(
+                "UPDATE products SET active = FALSE WHERE name != ALL($1::text[])",
+                current_names,
+            )
+        else:
+            await conn.execute("UPDATE products SET active = FALSE")
 
 
 async def generate_unique_account_number(conn) -> str:
