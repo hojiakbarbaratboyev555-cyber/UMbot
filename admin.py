@@ -24,12 +24,12 @@ async def order_approve(callback: CallbackQuery, bot: Bot):
 
     await db.update_order_status(order_id, "approved")
     if callback.message.caption:
-        await callback.message.edit_caption(caption=callback.message.caption + "\n\n✅ Tasdiqlandi")
+        await callback.message.edit_caption(caption=callback.message.caption + "\n\n✅ 𝗧𝗮𝘀𝗱𝗶𝗾𝗹𝗮𝗻𝗱𝗶")
     else:
         await callback.message.edit_text(callback.message.text + "\n\n✅ Tasdiqlandi")
-    await callback.answer("Tasdiqlandi")
+    await callback.answer("𝗧𝗮𝘀𝗱𝗶𝗾𝗹𝗮𝗻𝗱𝗶")
 
-    await bot.send_message(order["user_id"], "✅ Sizning buyurtmangiz tasdiqlandi.")
+    await bot.send_message(order["user_id"], "✅ 𝗦𝗶𝘇𝗻𝗶𝗻𝗴 𝗯𝘂𝘆𝘂𝗿𝘁𝗺𝗮𝗻𝗴𝗶𝘇 𝘁𝗮𝘀𝗱𝗶𝗾𝗹𝗮𝗻𝗱𝗶")
 
 
 @router.callback_query(F.data.startswith("order_reject:"))
@@ -43,9 +43,9 @@ async def order_reject(callback: CallbackQuery, bot: Bot):
 
     await db.update_order_status(order_id, "rejected")
     if callback.message.caption:
-        await callback.message.edit_caption(caption=callback.message.caption + "\n\n❌ Rad etildi")
+        await callback.message.edit_caption(caption=callback.message.caption + "\n\n❌ 𝗥𝗮𝗱 𝗲𝘁𝗶𝗹𝗱𝗶")
     else:
-        await callback.message.edit_text(callback.message.text + "\n\n❌ Rad etildi")
+        await callback.message.edit_text(callback.message.text + "\n\n❌ 𝗥𝗮𝗱 𝗲𝘁𝗶𝗹𝗱𝗶")
     await callback.answer("Rad etildi")
 
     await bot.send_message(order["user_id"], "❌ Sizning buyurtmangiz tasdiqlanmadi.")
@@ -80,12 +80,12 @@ async def topup_approve(callback: CallbackQuery, bot: Bot):
     await db.update_topup_status(topup_id, "approved")
     await db.update_balance(topup["user_id"], topup["amount"])
 
-    await callback.message.edit_caption(caption=callback.message.caption + "\n\n✅ Tasdiqlandi")
-    await callback.answer("Tasdiqlandi")
+    await callback.message.edit_caption(caption=callback.message.caption + "\n\n✅ 𝗧𝗮𝘀𝗱𝗶𝗾𝗹𝗮𝗻𝗱𝗶")
+    await callback.answer("𝗧𝗮𝘀𝗱𝗶𝗾𝗹𝗮𝗻𝗱𝗶")
 
     await bot.send_message(
         topup["user_id"],
-        f"✅ Hisobingizga {topup['amount']} {CURRENCY_NAME} qo'shildi.",
+        f"✅ 𝗛𝗶𝘀𝗼𝗯𝗶𝗻𝗴𝗶𝘇 {topup['amount']} {CURRENCY_NAME}𝗴𝗮 𝘁𝗼ʼ𝗹𝗱𝗶𝗿𝗶𝗹𝗱𝗶.",
     )
 
 
