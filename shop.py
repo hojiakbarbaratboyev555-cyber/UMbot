@@ -8,7 +8,7 @@ from keyboards import product_buy_kb, admin_order_kb, back_kb
 router = Router()
 
 
-@router.message(F.text == "🛍 Do'kon")
+@router.message(F.text == "🛍 𝗗𝗼ʼ𝗸𝗼𝗻")
 async def show_shop(message: Message):
     products = await db.get_active_products()
 
