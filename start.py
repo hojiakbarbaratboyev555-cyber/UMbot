@@ -20,15 +20,12 @@ async def cmd_start(message: Message):
     if WELCOME_STICKER_ID:
         await message.answer_sticker(WELCOME_STICKER_ID)
     else:
-        await message.answer("🏠")
-
-    await message.answer(
-        "Xush kelibsiz! Quyidagi menyudan kerakli bo'limni tanlang:",
+        await message.answer("🏠"),
         reply_markup=main_menu_kb(),
     )
 
 
-@router.message(F.text == "◀️ Ortga qaytish")
+@router.message(F.text == "◀️ Orqaga")
 async def back_to_main(message: Message, state):
     await state.clear()
-    await message.answer("Asosiy menyu:", reply_markup=main_menu_kb())
+    await message.answer("🏠", reply_markup=main_menu_kb())
