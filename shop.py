@@ -3,7 +3,6 @@ from aiogram.types import Message, CallbackQuery
 
 import database as db
 from config import ADMIN_ID, CURRENCY_NAME
-from rate import get_hb_rate_sum
 from keyboards import product_buy_kb, admin_order_kb, back_kb
 
 router = Router()
@@ -17,18 +16,13 @@ async def show_shop(message: Message):
         await message.answer("Hozircha mahsulotlar mavjud emas.")
         return
 
-    rate = await get_hb_rate_sum()
-
     await message.answer("Mahsulotlar ro'yxati:", reply_markup=back_kb())
 
     for p in products:
-        price_sum = float(p["price"])
-        price_hb = round(price_sum / rate, 4) if rate else 0
-
         caption = (
             f"<b>{p['name']}</b>\n\n"
             f"{p['description'] or ''}\n\n"
-            f"💰 Narxi: {price_sum:,.0f} so'm (≈ {price_hb} {CURRENCY_NAME})"
+            f"💰 Narxi: {p['price']} {CURRENCY_NAME}"
         )
         if p["photo_file_id"]:
             await message.answer_photo(
@@ -49,20 +43,15 @@ async def buy_product(callback: CallbackQuery, bot: Bot):
         await callback.answer("Mahsulot mavjud emas.", show_alert=True)
         return
 
-    # Xarid vaqtidagi ENG joriy TON kursi bo'yicha qayta hisoblaymiz
-    rate = await get_hb_rate_sum()
-    price_sum = float(product["price"])
-    price_hb = round(price_sum / rate, 4) if rate else 0
-
     user = await db.get_user(callback.from_user.id)
 
-    if float(user["balance"]) < price_hb:
+    if user["balance"] < product["price"]:
         await callback.answer("❌ Mablag' yetarli emas", show_alert=True)
         return
 
     # Mablag'ni darhol yechib qo'yamiz (tasdiqlanmasa ham qaytmaydi)
-    await db.update_balance(user["user_id"], -price_hb)
-    order = await db.create_order(user["user_id"], product["id"], price_hb)
+    await db.update_balance(user["user_id"], -product["price"])
+    order = await db.create_order(user["user_id"], product["id"], product["price"])
 
     await callback.message.answer(
         "✅ Xarid muvaffaqiyatli amalga oshirildi. Natijani kuting."
@@ -75,6 +64,6 @@ async def buy_product(callback: CallbackQuery, bot: Bot):
         f"Mahsulot: {product['name']}\n"
         f"Foydalanuvchi: {username}\n"
         f"Foydalanuvchi ID: {user['user_id']}\n"
-        f"Narx: {price_sum:,.0f} so'm ({price_hb} {CURRENCY_NAME} yechildi)"
+        f"Narx: {product['price']} {CURRENCY_NAME}"
     )
     await bot.send_message(ADMIN_ID, admin_text, reply_markup=admin_order_kb(order["id"]))
