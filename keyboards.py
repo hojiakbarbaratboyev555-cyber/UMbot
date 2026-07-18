@@ -12,7 +12,7 @@ def main_menu_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="🛍 Do'kon"), KeyboardButton(text="👤 Hisobim")],
-            [KeyboardButton(text="🆘 Qo'llab-quvvatlash")],
+            [KeyboardButton(text="☎️ Qo'llab-quvvatlash")],
         ],
         resize_keyboard=True,
     )
