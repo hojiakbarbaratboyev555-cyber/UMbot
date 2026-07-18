@@ -62,6 +62,12 @@ def main():
     if WEBHOOK_URL:
         # --- Render (production): webhook rejimi ---
         app = web.Application()
+
+        async def health_check(request):
+            return web.Response(text="OK")
+
+        app.router.add_get("/", health_check)
+
         SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
         setup_application(app, dp, bot=bot)
         web.run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT)
