@@ -16,7 +16,7 @@ from config import (
     WEBAPP_HOST,
     WEBAPP_PORT,
 )
-from handlers import start, shop, account, earn, support, admin
+import start, shop, account, earn, support, admin
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
