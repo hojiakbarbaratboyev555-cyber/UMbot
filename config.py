@@ -23,7 +23,6 @@ ADMIN_ACCOUNT_NUMBER = "007"
 
 # --- Havolalar ---
 SUPPORT_URL = os.getenv("SUPPORT_URL", "https://t.me/your_admin_username")
-EARN_GROUP_URL = os.getenv("EARN_GROUP_URL", "https://t.me/your_group")
 
 # --- To'lov rekvizitlari (Pul kiritish bo'limi) ---
 PAYMENT_CARD_NUMBER = os.getenv("PAYMENT_CARD_NUMBER", "0000 0000 0000 0000")
@@ -37,6 +36,8 @@ MIN_TRANSFER_AMOUNT = 0.05
 TRANSFER_COMMISSION_PERCENT = 10  # %
 
 MIN_TOPUP_AMOUNT = 0.1
+MIN_WITHDRAW_AMOUNT = 0.5
+WITHDRAW_COMMISSION_PERCENT = 10  # %
 
 # --- Start stiker (file_id) ---
 WELCOME_STICKER_ID = os.getenv("WELCOME_STICKER_ID", "")
