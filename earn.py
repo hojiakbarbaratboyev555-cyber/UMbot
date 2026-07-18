@@ -9,8 +9,8 @@ from config import (
     PAYMENT_CARD_NUMBER,
     PAYMENT_CARD_OWNER,
     ADMIN_ID,
-    HB_RATE_SUM,
 )
+from rate import get_hb_rate_sum
 from keyboards import earn_kb, admin_topup_kb, back_kb
 from states import TopupStates
 
@@ -27,12 +27,15 @@ async def show_earn(message: Message):
 
 @router.callback_query(F.data == "topup_start")
 async def topup_start(callback: CallbackQuery, state: FSMContext):
+    rate = await get_hb_rate_sum()
+    min_sum = int(MIN_TOPUP_AMOUNT * rate)
+
     text = (
         f"Qabul qiluvchi:\n"
         f"Karta: {PAYMENT_CARD_NUMBER}\n"
         f"Ism: {PAYMENT_CARD_OWNER}\n"
         f"Min summa: {MIN_TOPUP_AMOUNT} {CURRENCY_NAME} "
-        f"({int(MIN_TOPUP_AMOUNT * HB_RATE_SUM):,} so'm)\n\n"
+        f"(≈ {min_sum:,} so'm, TON kursiga bog'liq)\n\n"
         f"To'lov miqdorini kiriting"
     )
     await state.set_state(TopupStates.waiting_amount)
