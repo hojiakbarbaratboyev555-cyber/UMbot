@@ -59,35 +59,27 @@ def main():
     dp.shutdown.register(on_shutdown)
 
     if WEBHOOK_URL:
-    # --- Render (production): webhook rejimi ---
-    app = web.Application()
+        # --- Render (production): webhook rejimi ---
+        app = web.Application()
 
-    async def health_check(request):
-        return web.Response(text="OK")
+        async def health_check(request):
+            return web.Response(text="OK")
 
-    app.router.add_get("/", health_check)
+        app.router.add_get("/", health_check)
 
-    SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
-    setup_application(app, dp, bot=bot)
-
-    import traceback
-
-    try:
+        SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
+        setup_application(app, dp, bot=bot)
         web.run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT)
-    except Exception:
-        traceback.print_exc()
-        raise
+    else:
+        # --- Lokal test: polling rejimi ---
+        async def _run_polling():
+            await on_startup(bot)
+            try:
+                await dp.start_polling(bot)
+            finally:
+                await on_shutdown(bot)
 
-else:
-    # --- Lokal test: polling rejimi ---
-    async def _run_polling():
-        await on_startup(bot)
-        try:
-            await dp.start_polling(bot)
-        finally:
-            await on_shutdown(bot)
-
-    asyncio.run(_run_polling())
+        asyncio.run(_run_polling())
 
 
 if __name__ == "__main__":
