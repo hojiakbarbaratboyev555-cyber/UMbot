@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 
 import database as db
 from config import CURRENCY_NAME, MIN_TRANSFER_AMOUNT, TRANSFER_COMMISSION_PERCENT, ADMIN_ID
+from rate import get_hb_rate_sum
 from keyboards import account_kb, transfer_confirm_kb, main_menu_kb
 from states import TransferStates
 
@@ -13,11 +14,13 @@ router = Router()
 @router.message(F.text == "👤 Hisobim")
 async def show_account(message: Message):
     user = await db.get_user(message.from_user.id)
+    rate = await get_hb_rate_sum()
+    balance_sum = int(float(user["balance"]) * rate)
 
     text = (
         f"👤 Ism: {user['full_name']}\n"
         f"🔢 Hisob raqam: {user['account_number']}\n"
-        f"💰 Balans: {user['balance']} {CURRENCY_NAME}"
+        f"💰 Balans: {user['balance']} {CURRENCY_NAME} (≈ {balance_sum:,} so'm)"
     )
     await message.answer(text, reply_markup=account_kb())
 
