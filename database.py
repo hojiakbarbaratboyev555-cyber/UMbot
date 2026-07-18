@@ -8,7 +8,11 @@ pool: asyncpg.Pool | None = None
 async def init_db():
     """Bazaga ulanish pool'ini yaratadi va jadvallarni tayyorlaydi."""
     global pool
-    pool = await asyncpg.create_pool(dsn=DATABASE_URL, min_size=1, max_size=10)
+    try:
+        pool = await asyncpg.create_pool(dsn=DATABASE_URL, min_size=1, max_size=10)
+    except Exception:
+        # Ba'zi Render PostgreSQL instance'lari SSL talab qiladi
+        pool = await asyncpg.create_pool(dsn=DATABASE_URL, min_size=1, max_size=10, ssl="require")
 
     async with pool.acquire() as conn:
         await conn.execute(
