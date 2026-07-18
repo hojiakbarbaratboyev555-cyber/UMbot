@@ -5,10 +5,10 @@ PRODUCTS = [
         "price": 1.3,  # so'mda
         "photo_file_id": None,
     },
-   # {
-        "name": "Namuna mahsulot 2",
-        "description": "Ikkinchi mahsulot tavsifi.",
-        "price": 75_000,  # so'mda
-        "photo_file_id": None,
-    },
+#    {
+#        "name": "Namuna mahsulot 2",
+#        "description": "Ikkinchi #mahsulot tavsifi.",
+#        "price": 75_000,  # so'mda
+#        "photo_file_id": None,
+#    },
 ]
