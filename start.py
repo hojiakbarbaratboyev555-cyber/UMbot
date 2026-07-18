@@ -24,7 +24,7 @@ async def cmd_start(message: Message):
         reply_markup=main_menu_kb())
 
 
-@router.message(F.text == "◀️ Orqaga")
+@router.message(F.text == "◀️ Ortga qaytish")
 async def back_to_main(message: Message, state):
     await state.clear()
     await message.answer("🏠", reply_markup=main_menu_kb())
