@@ -105,6 +105,28 @@ async def topup_reject(callback: CallbackQuery, bot: Bot):
     await bot.send_message(topup["user_id"], "❌ To'lovingiz tasdiqlanmadi.")
 
 
+# ---------- Pul chiqarish ----------
+
+@router.callback_query(F.data.startswith("withdraw_approve:"))
+async def withdraw_approve(callback: CallbackQuery, bot: Bot):
+    withdrawal_id = int(callback.data.split(":")[1])
+    withdrawal = await db.get_withdrawal(withdrawal_id)
+
+    if not withdrawal or withdrawal["status"] != "pending":
+        await callback.answer("Bu so'rov allaqachon ko'rib chiqilgan.", show_alert=True)
+        return
+
+    await db.update_withdrawal_status(withdrawal_id, "approved")
+
+    if callback.message.caption:
+        await callback.message.edit_caption(caption=callback.message.caption + "\n\n✅ Tasdiqlandi")
+    else:
+        await callback.message.edit_text(callback.message.text + "\n\n✅ Tasdiqlandi")
+    await callback.answer("Tasdiqlandi")
+
+    await bot.send_message(withdrawal["user_id"], "✅ Pul tushdi.")
+
+
 # ---------- Adminning erkin xabari foydalanuvchiga ----------
 
 @router.message(AdminMessageStates.waiting_message)
