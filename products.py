@@ -14,17 +14,17 @@ PRODUCTS = [
     {
         "name": "1 oylik telegram premium",
         "description": "1 oy telegram premium funksiyalaridan erkin foydalanasiz. Akkauntga kirib olib beriladi",
-        "price": 30_000,  # so'mda — narxni o'zingiz to'g'rilang
+        "price": 1.3,  # so'mda — narxni o'zingiz to'g'rilang
         "photo_file_id": None,
     },
     {
         "name": "@UnvMafiaBot bot puli 💸",
-        "description": "1000 💸 bot ouli = 0.05⌁𝗛𝗕⌁",
+        "description": "1000 💸 bot puli = 0.05⌁𝗛𝗕⌁",
         "price": 0.05,  # so'mda — narxni o'zingiz to'g'rilang
         "photo_file_id": None,
     },
     {
-        "name": "@ UnvMafiabot olmosi 💎",
+        "name": "@UnvMafiabot olmosi 💎",
         "description": "2💎 = 0.06⌁𝗛𝗕⌁",
         "price": 0.06,  # so'mda — narxni o'zingiz to'g'rilang
         "photo_file_id": None,
