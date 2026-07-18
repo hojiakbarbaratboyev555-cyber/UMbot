@@ -11,8 +11,8 @@ from config import SUPPORT_URL, CURRENCY_NAME
 def main_menu_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="🛍 Do'kon"), KeyboardButton(text="👤 Hisobim")],
-            [KeyboardButton(text="☎️ Qo'llab-quvvatlash")],
+            [KeyboardButton(text="🛍 𝗗𝗼ʼ𝗸𝗼𝗻"), KeyboardButton(text="👤 𝗛𝗶𝘀𝗼𝗯𝗶𝗺")],
+            [KeyboardButton(text="☎️ 𝗤𝗼ʼ𝗹𝗹𝗮𝗯-𝗾𝘂𝘃𝘃𝗮𝘁𝗹𝗮𝘀𝗵")],
         ],
         resize_keyboard=True,
     )
@@ -20,7 +20,7 @@ def main_menu_kb() -> ReplyKeyboardMarkup:
 
 def back_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
-        keyboard=[[KeyboardButton(text="◀️ Ortga qaytish")]],
+        keyboard=[[KeyboardButton(text="◀️ 𝗢𝗿𝗾𝗮𝗴𝗮")]],
         resize_keyboard=True,
     )
 
@@ -29,7 +29,7 @@ def back_kb() -> ReplyKeyboardMarkup:
 def product_buy_kb(product_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="🛒 Sotib olish", callback_data=f"buy:{product_id}")]
+            [InlineKeyboardButton(text="🛒 𝗦𝗼𝘁𝗶𝗯 𝗼𝗹𝗶𝘀𝗵", callback_data=f"buy:{product_id}")]
         ]
     )
 
@@ -52,10 +52,10 @@ def account_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="💳 Pul kiritish", callback_data="topup_start"),
-                InlineKeyboardButton(text="💸 Pul chiqarish", callback_data="withdraw_start"),
+                InlineKeyboardButton(text="💳 𝗣𝘂𝗹 𝗸𝗶𝗿𝗶𝘁𝗶𝘀𝗵", callback_data="topup_start"),
+                InlineKeyboardButton(text="💸 𝗣𝘂𝗹 𝘆𝗲𝗰𝗵𝗶𝘀𝗵", callback_data="withdraw_start"),
             ],
-            [InlineKeyboardButton(text="🔁 O'tkazish", callback_data="transfer_start")],
+            [InlineKeyboardButton(text="🔁 𝗢ʼ𝘁𝗸𝗮𝘇𝗶𝘀𝗵", callback_data="transfer_start")],
         ]
     )
 
@@ -65,8 +65,8 @@ def transfer_confirm_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="✅ Tasdiqlash", callback_data="transfer_confirm"),
-                InlineKeyboardButton(text="◀️ Ortga", callback_data="transfer_cancel"),
+                InlineKeyboardButton(text="✅ 𝗧𝗮𝘀𝗱𝗶𝗾𝗹𝗮𝘀𝗵", callback_data="transfer_confirm"),
+                InlineKeyboardButton(text="◀️ 𝗢𝗿𝗾𝗮𝗴𝗮", callback_data="transfer_cancel"),
             ]
         ]
     )
