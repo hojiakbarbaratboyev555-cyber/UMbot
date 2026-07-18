@@ -69,7 +69,13 @@ def main():
 
         SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
         setup_application(app, dp, bot=bot)
-        web.run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT)
+        import traceback
+
+try:
+    web.run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT)
+except Exception:
+    traceback.print_exc()
+    raise
     else:
         # --- Lokal test: polling rejimi ---
         async def _run_polling():
