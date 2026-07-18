@@ -54,6 +54,15 @@ async def init_db():
                 created_at TIMESTAMP DEFAULT NOW()
             );
 
+            CREATE TABLE IF NOT EXISTS withdrawals (
+                id SERIAL PRIMARY KEY,
+                user_id BIGINT NOT NULL REFERENCES users(user_id),
+                amount NUMERIC(14, 2) NOT NULL,
+                card_number TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'pending',  -- pending / approved / rejected
+                created_at TIMESTAMP DEFAULT NOW()
+            );
+
             CREATE TABLE IF NOT EXISTS transfers (
                 id SERIAL PRIMARY KEY,
                 from_user_id BIGINT NOT NULL REFERENCES users(user_id),
@@ -256,3 +265,27 @@ async def create_transfer(from_user_id: int, to_user_id: int, amount, commission
             """,
             from_user_id, to_user_id, amount, commission,
         )
+
+
+async def create_withdrawal(user_id: int, amount, card_number: str):
+    async with pool.acquire() as conn:
+        return await conn.fetchrow(
+            """
+            INSERT INTO withdrawals (user_id, amount, card_number, status)
+            VALUES ($1, $2, $3, 'pending')
+            RETURNING *
+            """,
+            user_id, amount, card_number,
+        )
+
+
+async def update_withdrawal_status(withdrawal_id: int, status: str):
+    async with pool.acquire() as conn:
+        await conn.execute(
+            "UPDATE withdrawals SET status = $1 WHERE id = $2", status, withdrawal_id
+        )
+
+
+async def get_withdrawal(withdrawal_id: int):
+    async with pool.acquire() as conn:
+        return await conn.fetchrow("SELECT * FROM withdrawals WHERE id = $1", withdrawal_id)
