@@ -76,7 +76,6 @@ try:
 except Exception:
     traceback.print_exc()
     raise
-    else:
         # --- Lokal test: polling rejimi ---
         async def _run_polling():
             await on_startup(bot)
