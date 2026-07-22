@@ -11,7 +11,7 @@ from config import SUPPORT_URL, CURRENCY_NAME
 def main_menu_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="🛍 Do'kon"), KeyboardButton(text="👤 𝗛𝗶𝘀𝗼𝗯𝗶𝗺")],
+            [KeyboardButton(text="🛍 𝗗𝗼ʼ𝗸𝗼𝗻"), KeyboardButton(text="👤 𝗛𝗶𝘀𝗼𝗯𝗶𝗺")],
             [KeyboardButton(text="☎️ 𝗤𝗼ʼ𝗹𝗹𝗮𝗯-𝗾𝘂𝘃𝘃𝗮𝘁𝗹𝗮𝘀𝗵")],
         ],
         resize_keyboard=True,
