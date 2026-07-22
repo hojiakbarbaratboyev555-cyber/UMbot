@@ -1,4 +1,5 @@
 from aiogram import Router, F, Bot
+from aiogram.filters import Command, CommandObject
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 
@@ -9,6 +10,45 @@ from states import AdminMessageStates
 router = Router()
 router.callback_query.filter(F.from_user.id == ADMIN_ID)
 router.message.filter(F.from_user.id == ADMIN_ID)
+
+
+# ---------- HB berish (yagona manba - admin qo'lda beradi) ----------
+
+@router.message(Command("grant"))
+async def grant_balance(message: Message, command: CommandObject, bot: Bot):
+    if not command.args:
+        await message.answer("Format: /grant <hisob_raqami> <miqdor>\nMasalan: /grant 022 5")
+        return
+
+    parts = command.args.split()
+    if len(parts) != 2:
+        await message.answer("Format: /grant <hisob_raqami> <miqdor>\nMasalan: /grant 022 5")
+        return
+
+    account_number, amount_text = parts
+
+    if not account_number.isdigit() or len(account_number) != 3:
+        await message.answer("Hisob raqami 3 xonali bo'lishi kerak (masalan: 022).")
+        return
+
+    try:
+        amount = float(amount_text)
+    except ValueError:
+        await message.answer("Miqdor noto'g'ri. Raqam kiriting.")
+        return
+
+    user = await db.get_user_by_account(account_number)
+    if not user:
+        await message.answer("Bunday hisob raqamli foydalanuvchi topilmadi.")
+        return
+
+    await db.update_balance(user["user_id"], amount)
+    await message.answer(f"✅ {account_number} raqamiga {amount} {CURRENCY_NAME} berildi.")
+
+    try:
+        await bot.send_message(user["user_id"], f"💰 Hisobingizga {amount} {CURRENCY_NAME} qo'shildi.")
+    except Exception:
+        pass
 
 
 # ---------- Buyurtmalar (Do'kon) ----------
@@ -24,12 +64,12 @@ async def order_approve(callback: CallbackQuery, bot: Bot):
 
     await db.update_order_status(order_id, "approved")
     if callback.message.caption:
-        await callback.message.edit_caption(caption=callback.message.caption + "\n\n✅ 𝗧𝗮𝘀𝗱𝗶𝗾𝗹𝗮𝗻𝗱𝗶")
+        await callback.message.edit_caption(caption=callback.message.caption + "\n\n✅ Tasdiqlandi")
     else:
         await callback.message.edit_text(callback.message.text + "\n\n✅ Tasdiqlandi")
-    await callback.answer("𝗧𝗮𝘀𝗱𝗶𝗾𝗹𝗮𝗻𝗱𝗶")
+    await callback.answer("Tasdiqlandi")
 
-    await bot.send_message(order["user_id"], "✅ 𝗦𝗶𝘇𝗻𝗶𝗻𝗴 𝗯𝘂𝘆𝘂𝗿𝘁𝗺𝗮𝗻𝗴𝗶𝘇 𝘁𝗮𝘀𝗱𝗶𝗾𝗹𝗮𝗻𝗱𝗶")
+    await bot.send_message(order["user_id"], "✅ Sizning buyurtmangiz tasdiqlandi.")
 
 
 @router.callback_query(F.data.startswith("order_reject:"))
@@ -43,9 +83,9 @@ async def order_reject(callback: CallbackQuery, bot: Bot):
 
     await db.update_order_status(order_id, "rejected")
     if callback.message.caption:
-        await callback.message.edit_caption(caption=callback.message.caption + "\n\n❌ 𝗥𝗮𝗱 𝗲𝘁𝗶𝗹𝗱𝗶")
+        await callback.message.edit_caption(caption=callback.message.caption + "\n\n❌ Rad etildi")
     else:
-        await callback.message.edit_text(callback.message.text + "\n\n❌ 𝗥𝗮𝗱 𝗲𝘁𝗶𝗹𝗱𝗶")
+        await callback.message.edit_text(callback.message.text + "\n\n❌ Rad etildi")
     await callback.answer("Rad etildi")
 
     await bot.send_message(order["user_id"], "❌ Sizning buyurtmangiz tasdiqlanmadi.")
@@ -64,67 +104,6 @@ async def order_msg_start(callback: CallbackQuery, state: FSMContext):
     await state.update_data(target_user_id=order["user_id"])
     await callback.message.answer("Foydalanuvchiga yuboriladigan xabarni yozing (istalgan turda):")
     await callback.answer()
-
-
-# ---------- To'lovlar (Pul kiritish) ----------
-
-@router.callback_query(F.data.startswith("topup_approve:"))
-async def topup_approve(callback: CallbackQuery, bot: Bot):
-    topup_id = int(callback.data.split(":")[1])
-    topup = await db.get_topup(topup_id)
-
-    if not topup or topup["status"] != "pending":
-        await callback.answer("Bu to'lov allaqachon ko'rib chiqilgan.", show_alert=True)
-        return
-
-    await db.update_topup_status(topup_id, "approved")
-    await db.update_balance(topup["user_id"], topup["amount"])
-
-    await callback.message.edit_caption(caption=callback.message.caption + "\n\n✅ 𝗧𝗮𝘀𝗱𝗶𝗾𝗹𝗮𝗻𝗱𝗶")
-    await callback.answer("𝗧𝗮𝘀𝗱𝗶𝗾𝗹𝗮𝗻𝗱𝗶")
-
-    await bot.send_message(
-        topup["user_id"],
-        f"✅ 𝗛𝗶𝘀𝗼𝗯𝗶𝗻𝗴𝗶𝘇 {topup['amount']} {CURRENCY_NAME}𝗴𝗮 𝘁𝗼ʼ𝗹𝗱𝗶𝗿𝗶𝗹𝗱𝗶.",
-    )
-
-
-@router.callback_query(F.data.startswith("topup_reject:"))
-async def topup_reject(callback: CallbackQuery, bot: Bot):
-    topup_id = int(callback.data.split(":")[1])
-    topup = await db.get_topup(topup_id)
-
-    if not topup or topup["status"] != "pending":
-        await callback.answer("Bu to'lov allaqachon ko'rib chiqilgan.", show_alert=True)
-        return
-
-    await db.update_topup_status(topup_id, "rejected")
-    await callback.message.edit_caption(caption=callback.message.caption + "\n\n❌ Rad etildi")
-    await callback.answer("Rad etildi")
-
-    await bot.send_message(topup["user_id"], "❌ To'lovingiz tasdiqlanmadi.")
-
-
-# ---------- Pul chiqarish ----------
-
-@router.callback_query(F.data.startswith("withdraw_approve:"))
-async def withdraw_approve(callback: CallbackQuery, bot: Bot):
-    withdrawal_id = int(callback.data.split(":")[1])
-    withdrawal = await db.get_withdrawal(withdrawal_id)
-
-    if not withdrawal or withdrawal["status"] != "pending":
-        await callback.answer("Bu so'rov allaqachon ko'rib chiqilgan.", show_alert=True)
-        return
-
-    await db.update_withdrawal_status(withdrawal_id, "approved")
-
-    if callback.message.caption:
-        await callback.message.edit_caption(caption=callback.message.caption + "\n\n✅ Tasdiqlandi")
-    else:
-        await callback.message.edit_text(callback.message.text + "\n\n✅ Tasdiqlandi")
-    await callback.answer("Tasdiqlandi")
-
-    await bot.send_message(withdrawal["user_id"], "✅ Pul tushdi.")
 
 
 # ---------- Adminning erkin xabari foydalanuvchiga ----------
