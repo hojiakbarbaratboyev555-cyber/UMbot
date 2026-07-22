@@ -10,12 +10,12 @@
 #   fallback_usd - API ishlamay qolsa ishlatiladigan taxminiy USD narx
 
 ITEMS = [
-    {"key": "bitcoin", "emoji": "🏆", "label": "BITCOIN", "source": "coingecko", "id": "bitcoin", "op": "div", "factor": 1000, "fallback_usd": 64500},
-    {"key": "oltin",   "emoji": "🍇", "label": "OLTIN",   "source": "yahoo",     "id": "GC=F",     "op": "div", "factor": 100,  "fallback_usd": 4017},
-    {"key": "tesla",   "emoji": "🍎", "label": "TESLA",   "source": "yahoo",     "id": "TSLA",     "op": "div", "factor": 10,   "fallback_usd": 380},
-    {"key": "google",  "emoji": "🔪", "label": "GOOGLE",  "source": "yahoo",     "id": "GOOGL",    "op": "div", "factor": 10,   "fallback_usd": 346.77},
-    {"key": "ton",     "emoji": "🥄", "label": "TON",     "source": "coingecko", "id": "the-open-network", "op": "mul", "factor": 10, "fallback_usd": 1.58},
-    {"key": "spacex",  "emoji": "✏️", "label": "SPACEX",  "source": "yahoo",     "id": "SPCX",     "op": "div", "factor": 10,   "fallback_usd": 123.99},
+    {"key": "bitcoin", "emoji": "🏆", "label": "KUBOK", "source": "coingecko", "id": "bitcoin", "op": "div", "factor": 1000, "fallback_usd": 64500},
+    {"key": "oltin",   "emoji": "🍇", "label": "UZUM",   "source": "yahoo",     "id": "GC=F",     "op": "div", "factor": 100,  "fallback_usd": 4017},
+    {"key": "tesla",   "emoji": "🍎", "label": "OLMA",   "source": "yahoo",     "id": "TSLA",     "op": "div", "factor": 10,   "fallback_usd": 380},
+    {"key": "google",  "emoji": "🔪", "label": "PICHOQ",  "source": "yahoo",     "id": "GOOGL",    "op": "div", "factor": 10,   "fallback_usd": 346.77},
+    {"key": "ton",     "emoji": "🥄", "label": "QOSHIQ",     "source": "coingecko", "id": "the-open-network", "op": "mul", "factor": 10, "fallback_usd": 1.58},
+    {"key": "spacex",  "emoji": "✏️", "label": "QALAM",  "source": "yahoo",     "id": "SPCX",     "op": "div", "factor": 10,   "fallback_usd": 123.99},
 ]
 
 
