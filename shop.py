@@ -3,18 +3,16 @@ from aiogram.types import Message, CallbackQuery
 
 import database as db
 from config import ADMIN_ID, CURRENCY_NAME
-from keyboards import product_buy_kb, admin_order_kb, back_kb
+from items import ITEMS
+from rate_assets import get_item_hb_price
+from keyboards import product_buy_kb, admin_order_kb, back_kb, item_buy_kb
 
 router = Router()
 
 
-@router.message(F.text == "🛍 𝗗𝗼ʼ𝗸𝗼𝗻")
+@router.message(F.text == "🛍 Do'kon")
 async def show_shop(message: Message):
     products = await db.get_active_products()
-
-    if not products:
-        await message.answer("Hozircha mahsulotlar mavjud emas.")
-        return
 
     await message.answer("Mahsulotlar ro'yxati:", reply_markup=back_kb())
 
@@ -33,6 +31,12 @@ async def show_shop(message: Message):
         else:
             await message.answer(caption, reply_markup=product_buy_kb(p["id"]))
 
+    # Real aktivlarga bog'langan buyumlar
+    for item in ITEMS:
+        price_hb = await get_item_hb_price(item)
+        text = f"{item['emoji']} <b>{item['label']}</b>\n\n💰 Narxi: {price_hb} {CURRENCY_NAME}"
+        await message.answer(text, reply_markup=item_buy_kb(item["key"]))
+
 
 @router.callback_query(F.data.startswith("buy:"))
 async def buy_product(callback: CallbackQuery, bot: Bot):
@@ -43,15 +47,15 @@ async def buy_product(callback: CallbackQuery, bot: Bot):
         await callback.answer("Mahsulot mavjud emas.", show_alert=True)
         return
 
+    price_hb = float(product["price"])
     user = await db.get_user(callback.from_user.id)
 
-    if user["balance"] < product["price"]:
+    if float(user["balance"]) < price_hb:
         await callback.answer("❌ Mablag' yetarli emas", show_alert=True)
         return
 
-    # Mablag'ni darhol yechib qo'yamiz (tasdiqlanmasa ham qaytmaydi)
-    await db.update_balance(user["user_id"], -product["price"])
-    order = await db.create_order(user["user_id"], product["id"], product["price"])
+    await db.update_balance(user["user_id"], -price_hb)
+    order = await db.create_order(user["user_id"], product["id"], price_hb)
 
     await callback.message.answer(
         "✅ Xarid muvaffaqiyatli amalga oshirildi. Natijani kuting."
@@ -64,6 +68,29 @@ async def buy_product(callback: CallbackQuery, bot: Bot):
         f"Mahsulot: {product['name']}\n"
         f"Foydalanuvchi: {username}\n"
         f"Foydalanuvchi ID: {user['user_id']}\n"
-        f"Narx: {product['price']} {CURRENCY_NAME}"
+        f"Narx: {price_hb} {CURRENCY_NAME}"
     )
     await bot.send_message(ADMIN_ID, admin_text, reply_markup=admin_order_kb(order["id"]))
+
+
+@router.callback_query(F.data.startswith("buy_item:"))
+async def buy_item(callback: CallbackQuery):
+    item_key = callback.data.split(":", 1)[1]
+    item = next((i for i in ITEMS if i["key"] == item_key), None)
+
+    if not item:
+        await callback.answer("Buyum mavjud emas.", show_alert=True)
+        return
+
+    # Xarid vaqtidagi ENG joriy narx bo'yicha hisoblanadi
+    price_hb = await get_item_hb_price(item)
+    user = await db.get_user(callback.from_user.id)
+
+    if float(user["balance"]) < price_hb:
+        await callback.answer("❌ Mablag' yetarli emas", show_alert=True)
+        return
+
+    await db.update_balance(user["user_id"], -price_hb)
+    await db.add_item_to_inventory(user["user_id"], item_key, 1)
+
+    await callback.answer(f"✅ {item['emoji']} {item['label']} sotib olindi! (-{price_hb} {CURRENCY_NAME})", show_alert=True)
