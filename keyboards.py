@@ -12,7 +12,7 @@ def main_menu_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="🛍 Do'kon"), KeyboardButton(text="👤 Hisobim")],
-            [KeyboardButton(text="🆘 Qo'llab-quvvatlash")],
+            [KeyboardButton(text="☎️ 𝗤𝗼ʼ𝗹𝗹𝗮𝗯-𝗾𝘂𝘃𝘃𝗮𝘁𝗹𝗮𝘀𝗵")],
         ],
         resize_keyboard=True,
     )
@@ -71,7 +71,7 @@ def transfer_confirm_kb() -> InlineKeyboardMarkup:
         inline_keyboard=[
             [
                 InlineKeyboardButton(text="✅ Tasdiqlash", callback_data="transfer_confirm"),
-                InlineKeyboardButton(text="◀️ Ortga", callback_data="transfer_cancel"),
+                InlineKeyboardButton(text="◀️ 𝗢𝗿𝗾𝗮𝗴𝗮", callback_data="transfer_cancel"),
             ]
         ]
     )
