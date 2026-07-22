@@ -11,7 +11,7 @@ from states import TransferStates
 router = Router()
 
 
-@router.message(F.text == "👤 Hisobim")
+@router.message(F.text == "👤 𝗛𝗶𝘀𝗼𝗯𝗶𝗺")
 async def show_account(message: Message):
     user = await db.get_user(message.from_user.id)
     inventory = await db.get_user_inventory(message.from_user.id)
