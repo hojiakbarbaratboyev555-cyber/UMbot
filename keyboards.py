@@ -11,8 +11,8 @@ from config import SUPPORT_URL, CURRENCY_NAME
 def main_menu_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="🛍 𝗗𝗼ʼ𝗸𝗼𝗻"), KeyboardButton(text="👤 𝗛𝗶𝘀𝗼𝗯𝗶𝗺")],
-            [KeyboardButton(text="☎️ 𝗤𝗼ʼ𝗹𝗹𝗮𝗯-𝗾𝘂𝘃𝘃𝗮𝘁𝗹𝗮𝘀𝗵")],
+            [KeyboardButton(text="🛍 Do'kon"), KeyboardButton(text="👤 Hisobim")],
+            [KeyboardButton(text="🆘 Qo'llab-quvvatlash")],
         ],
         resize_keyboard=True,
     )
@@ -20,7 +20,7 @@ def main_menu_kb() -> ReplyKeyboardMarkup:
 
 def back_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
-        keyboard=[[KeyboardButton(text="◀️ 𝗢𝗿𝗾𝗮𝗴𝗮")]],
+        keyboard=[[KeyboardButton(text="◀️ Ortga qaytish")]],
         resize_keyboard=True,
     )
 
@@ -29,7 +29,16 @@ def back_kb() -> ReplyKeyboardMarkup:
 def product_buy_kb(product_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="🛒 𝗦𝗼𝘁𝗶𝗯 𝗼𝗹𝗶𝘀𝗵", callback_data=f"buy:{product_id}")]
+            [InlineKeyboardButton(text="🛒 Sotib olish", callback_data=f"buy:{product_id}")]
+        ]
+    )
+
+
+# --- Do'kon: buyum (item) ostidagi inline tugma ---
+def item_buy_kb(item_key: str) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="🛒 Sotib olish", callback_data=f"buy_item:{item_key}")]
         ]
     )
 
@@ -47,15 +56,11 @@ def admin_order_kb(order_id: int) -> InlineKeyboardMarkup:
     )
 
 
-# --- Hisobim bo'limi ---
+# --- Hisobim bo'limi (faqat O'tkazish) ---
 def account_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [
-                InlineKeyboardButton(text="💳 𝗣𝘂𝗹 𝗸𝗶𝗿𝗶𝘁𝗶𝘀𝗵", callback_data="topup_start"),
-                InlineKeyboardButton(text="💸 𝗣𝘂𝗹 𝘆𝗲𝗰𝗵𝗶𝘀𝗵", callback_data="withdraw_start"),
-            ],
-            [InlineKeyboardButton(text="🔁 𝗢ʼ𝘁𝗸𝗮𝘇𝗶𝘀𝗵", callback_data="transfer_start")],
+            [InlineKeyboardButton(text="🔁 O'tkazish", callback_data="transfer_start")],
         ]
     )
 
@@ -65,30 +70,9 @@ def transfer_confirm_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="✅ 𝗧𝗮𝘀𝗱𝗶𝗾𝗹𝗮𝘀𝗵", callback_data="transfer_confirm"),
-                InlineKeyboardButton(text="◀️ 𝗢𝗿𝗾𝗮𝗴𝗮", callback_data="transfer_cancel"),
+                InlineKeyboardButton(text="✅ Tasdiqlash", callback_data="transfer_confirm"),
+                InlineKeyboardButton(text="◀️ Ortga", callback_data="transfer_cancel"),
             ]
-        ]
-    )
-
-
-# --- Admin uchun to'lov (topup) tasdiqlash ---
-def admin_topup_kb(topup_id: int) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(text="✅", callback_data=f"topup_approve:{topup_id}"),
-                InlineKeyboardButton(text="❌", callback_data=f"topup_reject:{topup_id}"),
-            ]
-        ]
-    )
-
-
-# --- Admin uchun pul chiqarish tasdiqlash ---
-def admin_withdraw_kb(withdrawal_id: int) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="✅", callback_data=f"withdraw_approve:{withdrawal_id}")]
         ]
     )
 
