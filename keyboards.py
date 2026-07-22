@@ -20,7 +20,7 @@ def main_menu_kb() -> ReplyKeyboardMarkup:
 
 def back_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
-        keyboard=[[KeyboardButton(text="◀️ Ortga qaytish")]],
+        keyboard=[[KeyboardButton(text="◀️ 𝗢𝗿𝗾𝗮𝗴𝗮")]],
         resize_keyboard=True,
     )
 
