@@ -24,20 +24,13 @@ ADMIN_ACCOUNT_NUMBER = "007"
 # --- Havolalar ---
 SUPPORT_URL = os.getenv("SUPPORT_URL", "https://t.me/your_admin_username")
 
-# --- To'lov rekvizitlari (Pul kiritish bo'limi) ---
-PAYMENT_CARD_NUMBER = os.getenv("PAYMENT_CARD_NUMBER", "0000 0000 0000 0000")
-PAYMENT_CARD_OWNER = os.getenv("PAYMENT_CARD_OWNER", "M.N")
-
 # --- Valyuta sozlamalari ---
+# HB hech qanday so'm/pul qiymatiga ega emas - sof ichki ball.
+# Faqat admin tomonidan /grant buyrug'i orqali beriladi.
 CURRENCY_NAME = "⌁𝗛𝗕⌁"
-HB_RATE_SUM = 30_000  # 1 ⌁𝗛𝗕⌁ = 30 000 so'm (qat'iy kurs)
 
-MIN_TRANSFER_AMOUNT = 0.05
+MIN_TRANSFER_AMOUNT = 1
 TRANSFER_COMMISSION_PERCENT = 10  # %
-
-MIN_TOPUP_AMOUNT = 0.1
-MIN_WITHDRAW_AMOUNT = 0.5
-WITHDRAW_COMMISSION_PERCENT = 10  # %
 
 # --- Start stiker (file_id) ---
 WELCOME_STICKER_ID = os.getenv("WELCOME_STICKER_ID", "")
