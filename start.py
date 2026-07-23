@@ -7,9 +7,6 @@ from keyboards import main_menu_kb
 
 router = Router()
 
-WELCOME_EMOJI = '<tg-emoji emoji-id="5282843764451195532">👾</tg-emoji>'
-
-
 @router.message(CommandStart())
 async def cmd_start(message: Message):
     await db.get_or_create_user(
@@ -18,7 +15,7 @@ async def cmd_start(message: Message):
         username=message.from_user.username,
     )
 
-    await message.answer("🏡")
+    await message.answer("🏠")
 
     await message.answer(
         "Assalomu alaykum! Xush kelibsiz. Quyidagi menyudan kerakli bo'limni tanlang:",
@@ -29,7 +26,7 @@ async def cmd_start(message: Message):
 @router.message(F.text == "◀️ Ortga qaytish")
 async def back_to_main(message: Message, state):
     await state.clear()
-    await message.answer("🏡", reply_markup=main_menu_kb())
+    await message.answer("🏠", reply_markup=main_menu_kb())
 
 
 # VAQTINCHA: premium emoji ID'sini aniqlash uchun.
