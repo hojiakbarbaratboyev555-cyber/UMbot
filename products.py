@@ -19,4 +19,4 @@
 #        "photo_file_id": None,
 #    },
 #]
-PRODUCT = []
+PRODUCTS = []
