@@ -20,7 +20,7 @@ async def show_account(message: Message):
         f"<blockquote>👤 Ism: {user['full_name']}\n"
         f"🔢 Hisob raqam: {user['account_number']}\n"
         f"💰 Balans: {user['balance']} {CURRENCY_NAME}</blockquote>\n\n"
-        f"<blockquote>{format_inventory_table(inventory)}</blockquote>"
+        f"{format_inventory_table(inventory)}"
     )
     await message.answer(text, reply_markup=account_kb())
 
@@ -30,7 +30,7 @@ async def show_account(message: Message):
 @router.callback_query(F.data == "transfer_start")
 async def transfer_start(callback: CallbackQuery, state: FSMContext):
     await state.set_state(TransferStates.waiting_account_number)
-    await callback.message.answer("<blockquote>⚖️Eslatma:Har bir oʻtkazma 10% komissiya oladi.\nMasalan:\nSiz 2HB oʻtkazasiz qabul qiluvchiga 1.8HB tushadi</blockquote\n\nQabul qiluvchining hisob raqamini kiriting>")
+    await callback.message.answer("<blockquote>⚖️Eslatma:Har bir oʻtkazma 10% komissiya oladi.\nMasalan:\nSiz 2HB oʻtkazasiz qabul qiluvchiga 1.8HB tushadi</blockquote>\n\nQabul qiluvchining hisob raqamini kiriting")
     await callback.answer()
 
 
