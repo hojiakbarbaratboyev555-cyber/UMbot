@@ -5,12 +5,14 @@ import database as db
 from config import ADMIN_ID, CURRENCY_NAME
 from items import ITEMS
 from rate_assets import get_item_hb_price
-from keyboards import product_buy_kb, admin_order_kb, back_kb, item_buy_kb
+from keyboards import product_buy_kb, admin_order_kb, back_kb, item_trade_kb
 
 router = Router()
 
+SELL_DISCOUNT_PERCENT = 10  # sotish narxi xarid narxidan shuncha % kam
 
-@router.message(F.text == "🛍 𝗗𝗼ʼ𝗸𝗼𝗻")
+
+@router.message(F.text == "🛍 Do'kon")
 async def show_shop(message: Message):
     products = await db.get_active_products()
 
@@ -33,9 +35,15 @@ async def show_shop(message: Message):
 
     # Real aktivlarga bog'langan buyumlar
     for item in ITEMS:
-        price_hb = await get_item_hb_price(item)
-        text = f"{item['emoji']} <b>{item['label']}</b>\n\n💰 Narxi: {price_hb} {CURRENCY_NAME}"
-        await message.answer(text, reply_markup=item_buy_kb(item["key"]))
+        buy_price = await get_item_hb_price(item)
+        sell_price = round(buy_price * (1 - SELL_DISCOUNT_PERCENT / 100), 4)
+
+        text = (
+            f"{item['emoji']} <b>{item['label']}</b>\n\n"
+            f"Real narx: {buy_price} {CURRENCY_NAME}\n"
+            f"Sotish narxi: {sell_price} {CURRENCY_NAME}"
+        )
+        await message.answer(text, reply_markup=item_trade_kb(item["key"]))
 
 
 @router.callback_query(F.data.startswith("buy:"))
@@ -82,7 +90,6 @@ async def buy_item(callback: CallbackQuery):
         await callback.answer("Buyum mavjud emas.", show_alert=True)
         return
 
-    # Xarid vaqtidagi ENG joriy narx bo'yicha hisoblanadi
     price_hb = await get_item_hb_price(item)
     user = await db.get_user(callback.from_user.id)
 
@@ -94,3 +101,25 @@ async def buy_item(callback: CallbackQuery):
     await db.add_item_to_inventory(user["user_id"], item_key, 1)
 
     await callback.answer(f"✅ {item['emoji']} {item['label']} sotib olindi! (-{price_hb} {CURRENCY_NAME})", show_alert=True)
+
+
+@router.callback_query(F.data.startswith("sell_item:"))
+async def sell_item(callback: CallbackQuery):
+    item_key = callback.data.split(":", 1)[1]
+    item = next((i for i in ITEMS if i["key"] == item_key), None)
+
+    if not item:
+        await callback.answer("Buyum mavjud emas.", show_alert=True)
+        return
+
+    removed = await db.remove_item_from_inventory(callback.from_user.id, item_key, 1)
+    if not removed:
+        await callback.answer("❌ Sizda bu buyum yo'q.", show_alert=True)
+        return
+
+    buy_price = await get_item_hb_price(item)
+    sell_price = round(buy_price * (1 - SELL_DISCOUNT_PERCENT / 100), 4)
+
+    await db.update_balance(callback.from_user.id, sell_price)
+
+    await callback.answer(f"✅ {item['emoji']} {item['label']} sotildi! (+{sell_price} {CURRENCY_NAME})", show_alert=True)
