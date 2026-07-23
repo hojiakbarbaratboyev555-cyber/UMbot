@@ -20,7 +20,7 @@ async def cmd_start(message: Message):
     if WELCOME_STICKER_ID:
         await message.answer_sticker(WELCOME_STICKER_ID)
     else:
-        await message.answer("<tg-emoji emoji-id="5282843764451195532">👾</tg-emoji>"),
+        await message.answer('<tg-emoji emoji-id="5282843764451195532">👾</tg-emoji>'),
         reply_markup=main_menu_kb(),
 
 
