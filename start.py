@@ -18,7 +18,7 @@ async def cmd_start(message: Message):
         username=message.from_user.username,
     )
 
-    await message.answer(WELCOME_EMOJI)
+    await message.answer("🏡")
 
     await message.answer(
         "Assalomu alaykum! Xush kelibsiz. Quyidagi menyudan kerakli bo'limni tanlang:",
@@ -29,7 +29,7 @@ async def cmd_start(message: Message):
 @router.message(F.text == "◀️ Ortga qaytish")
 async def back_to_main(message: Message, state):
     await state.clear()
-    await message.answer("Asosiy menyu:", reply_markup=main_menu_kb())
+    await message.answer("🏡", reply_markup=main_menu_kb())
 
 
 # VAQTINCHA: premium emoji ID'sini aniqlash uchun.
