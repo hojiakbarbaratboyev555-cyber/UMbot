@@ -17,9 +17,9 @@ async def show_account(message: Message):
     inventory = await db.get_user_inventory(message.from_user.id)
 
     text = (
-        f"👤 Ism: {user['full_name']}\n"
+        f"<blockquote>👤 Ism: {user['full_name']}\n"
         f"🔢 Hisob raqam: {user['account_number']}\n"
-        f"💰 Balans: {user['balance']} {CURRENCY_NAME}\n\n"
+        f"💰 Balans: {user['balance']} {CURRENCY_NAME}</blockquote>\n\n"
         f"{format_inventory_table(inventory)}"
     )
     await message.answer(text, reply_markup=account_kb())
