@@ -11,7 +11,7 @@
 #
 # Mahsulotni o'chirish uchun shu ro'yxatdan qatorni olib tashlang va qayta deploy qiling.
 
-PRODUCTS = [
+#PRODUCTS = [
     {
         "name": "1 oylik telegram premium",
         "description": "1 oy telegram premium funksiyalaridan erkin foydalanasiz. Akkauntga kirib olib beriladi",
@@ -19,3 +19,4 @@ PRODUCTS = [
         "photo_file_id": None,
     },
 ]
+PRODUCT = []
