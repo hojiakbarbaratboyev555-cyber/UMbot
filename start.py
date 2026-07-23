@@ -20,10 +20,7 @@ async def cmd_start(message: Message):
     if WELCOME_STICKER_ID:
         await message.answer_sticker(WELCOME_STICKER_ID)
     else:
-        await message.answer("🏠")
-
-    await message.answer(
-        "Assalomu alaykum! Xush kelibsiz. Quyidagi menyudan kerakli bo'limni tanlang:",
+        await message.answer("🏠"),
         reply_markup=main_menu_kb(),
     )
 
