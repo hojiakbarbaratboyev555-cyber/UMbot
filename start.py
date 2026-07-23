@@ -22,7 +22,6 @@ async def cmd_start(message: Message):
     else:
         await message.answer("🏠"),
         reply_markup=main_menu_kb(),
-    )
 
 
 @router.message(F.text == "◀️ Ortga qaytish")
