@@ -20,7 +20,7 @@ async def show_account(message: Message):
         f"<blockquote>👤 Ism: {user['full_name']}\n"
         f"🔢 Hisob raqam: {user['account_number']}\n"
         f"💰 Balans: {user['balance']} {CURRENCY_NAME}</blockquote>\n\n"
-        f"{format_inventory_table(inventory)}"
+        f"<blockquote>{format_inventory_table(inventory)}</blockquote>"
     )
     await message.answer(text, reply_markup=account_kb())
 
@@ -30,7 +30,7 @@ async def show_account(message: Message):
 @router.callback_query(F.data == "transfer_start")
 async def transfer_start(callback: CallbackQuery, state: FSMContext):
     await state.set_state(TransferStates.waiting_account_number)
-    await callback.message.answer("Qabul qiluvchining hisob raqamini kiriting:")
+    await callback.message.answer("<blockquote>⚖️Eslatma:Har bir oʻtkazma 10% komissiya oladi.\nMasalan:\nSiz 2HB oʻtkazasiz qabul qiluvchiga 1.8HB tushadi</blockquote\n\nQabul qiluvchining hisob raqamini kiriting>")
     await callback.answer()
 
 
@@ -55,7 +55,7 @@ async def transfer_account_number(message: Message, state: FSMContext):
 
     await state.update_data(receiver_account=text, receiver_id=receiver["user_id"], receiver_name=receiver["full_name"])
     await state.set_state(TransferStates.waiting_amount)
-    await message.answer(f"Summani kiriting (min {MIN_TRANSFER_AMOUNT} {CURRENCY_NAME}):")
+    await message.answer(f"<blockquote>Oʻtkazmoqchi boʻlgan miqdorni kiriting (min {MIN_TRANSFER_AMOUNT} {CURRENCY_NAME}):</blockquote>")
 
 
 @router.message(TransferStates.waiting_amount)
@@ -82,12 +82,12 @@ async def transfer_amount(message: Message, state: FSMContext):
     await state.set_state(TransferStates.waiting_confirm)
 
     text_out = (
-        f"📤 O'tkazma\n\n"
+        f"<blockquote>📤 O'tkazma\n\n"
         f"ISM: {data['receiver_name']}\n"
         f"RAQAM: {data['receiver_account']}\n"
         f"Summa: {amount} {CURRENCY_NAME}\n\n"
-        f"Hisobingiz: {user['balance']} {CURRENCY_NAME}\n\n"
-        f"Agar rozi bo'lsangiz, tasdiqlash tugmasini bosing."
+        f"Hisobingiz: {user['balance']} {CURRENCY_NAME}</blockquote>\n\n"
+        f"<blockquote>Agar rozi bo'lsangiz, tasdiqlash tugmasini bosing.</blockquote>"
     )
     await message.answer(text_out, reply_markup=transfer_confirm_kb())
 
@@ -113,13 +113,13 @@ async def transfer_confirm(callback: CallbackQuery, state: FSMContext, bot: Bot)
     await db.create_transfer(callback.from_user.id, receiver_id, amount, commission)
 
     await state.clear()
-    await callback.message.edit_text("✅ O'tkazma muvaffaqiyatli amalga oshirildi.")
+    await callback.message.edit_text("<blockquote>✅ O'tkazma muvaffaqiyatli amalga oshirildi.</blockquote>")
     await callback.answer()
 
     try:
         await bot.send_message(
             receiver_id,
-            f"💸 Hisobingizga {receiver_amount} {CURRENCY_NAME} tushdi.",
+            f"<blockquote>💸 Hisobingizga {receiver_amount} {CURRENCY_NAME} tushdi.</blockquote>",
         )
     except Exception:
         pass
@@ -128,5 +128,5 @@ async def transfer_confirm(callback: CallbackQuery, state: FSMContext, bot: Bot)
 @router.callback_query(TransferStates.waiting_confirm, F.data == "transfer_cancel")
 async def transfer_cancel(callback: CallbackQuery, state: FSMContext):
     await state.clear()
-    await callback.message.edit_text("O'tkazma bekor qilindi.")
+    await callback.message.edit_text("<blockquote>O'tkazma bekor qilindi.</blockquote>")
     await callback.answer()
