@@ -10,7 +10,7 @@ router = Router()
 @router.message(F.text == "🆘 Qo'llab-quvvatlash")
 async def show_support(message: Message):
     await message.answer(
-        "Savollaringiz yoki muammolaringiz bo'lsa, admin bilan bog'laning:",
+        "<blockquote>Barcha muammolaringizni adminlarimiz bilan oson hal qiling</blockquote>",
         reply_markup=support_kb(),
     )
 
