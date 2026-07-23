@@ -11,8 +11,8 @@ from config import SUPPORT_URL, CURRENCY_NAME
 def main_menu_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="🛍 𝗗𝗼ʼ𝗸𝗼𝗻"), KeyboardButton(text="👤 𝗛𝗶𝘀𝗼𝗯𝗶𝗺")],
-            [KeyboardButton(text="☎️ 𝗤𝗼ʼ𝗹𝗹𝗮𝗯-𝗾𝘂𝘃𝘃𝗮𝘁𝗹𝗮𝘀𝗵")],
+            [KeyboardButton(text="🛍 Do'kon"), KeyboardButton(text="👤 Hisobim")],
+            [KeyboardButton(text="🆘 Qo'llab-quvvatlash")],
         ],
         resize_keyboard=True,
     )
@@ -20,7 +20,7 @@ def main_menu_kb() -> ReplyKeyboardMarkup:
 
 def back_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
-        keyboard=[[KeyboardButton(text="◀️ 𝗢𝗿𝗾𝗮𝗴𝗮")]],
+        keyboard=[[KeyboardButton(text="◀️ Ortga qaytish")]],
         resize_keyboard=True,
     )
 
@@ -34,11 +34,14 @@ def product_buy_kb(product_id: int) -> InlineKeyboardMarkup:
     )
 
 
-# --- Do'kon: buyum (item) ostidagi inline tugma ---
-def item_buy_kb(item_key: str) -> InlineKeyboardMarkup:
+# --- Do'kon: buyum (item) ostidagi sotib olish/sotish tugmalari ---
+def item_trade_kb(item_key: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="🛒 Sotib olish", callback_data=f"buy_item:{item_key}")]
+            [
+                InlineKeyboardButton(text="🛒 Sotib olish", callback_data=f"buy_item:{item_key}"),
+                InlineKeyboardButton(text="💰 Sotish", callback_data=f"sell_item:{item_key}"),
+            ]
         ]
     )
 
@@ -71,7 +74,7 @@ def transfer_confirm_kb() -> InlineKeyboardMarkup:
         inline_keyboard=[
             [
                 InlineKeyboardButton(text="✅ Tasdiqlash", callback_data="transfer_confirm"),
-                InlineKeyboardButton(text="◀️ 𝗢𝗿𝗾𝗮𝗴𝗮", callback_data="transfer_cancel"),
+                InlineKeyboardButton(text="◀️ Ortga", callback_data="transfer_cancel"),
             ]
         ]
     )
