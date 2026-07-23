@@ -24,6 +24,10 @@ ADMIN_ACCOUNT_NUMBER = "007"
 # --- Havolalar ---
 SUPPORT_URL = os.getenv("SUPPORT_URL", "https://t.me/your_admin_username")
 
+# --- Hisob to'ldirish ---
+TOPUP_TEXT = "Hisobingizni to'ldirish boʻlimiga xush kelibsiz\n\n<blockquote>1000💵 = 1【𝗛𝗕】\n1💎 = 1.5【𝗛𝗕】</blockquote>\n<blockquote>Pastdagi Guruh tugmasi orqali oʻtib @chiyx profiliga toʻlovni amalga oshirib 【𝗛𝗕】uchun deb yozing adminlar hisobingizga pullarni yuborishadi.</blockquote>\n\n Qandaydur muammolar boʻlsa shu guruhda ham hal qilishingiz mumkin"
+TOPUP_URL = "https://t.me/+BCK5dEstaGYzNDk1"
+
 # --- Valyuta sozlamalari ---
 # HB hech qanday so'm/pul qiymatiga ega emas - sof ichki ball.
 # Faqat admin tomonidan /grant buyrug'i orqali beriladi.
