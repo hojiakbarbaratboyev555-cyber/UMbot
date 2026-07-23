@@ -33,7 +33,7 @@ TOPUP_URL = "https://t.me/+BCK5dEstaGYzNDk1"
 # Faqat admin tomonidan /grant buyrug'i orqali beriladi.
 CURRENCY_NAME = "【𝗛𝗕】"
 
-MIN_TRANSFER_AMOUNT = 0.01
+MIN_TRANSFER_AMOUNT = 0.1
 TRANSFER_COMMISSION_PERCENT = 10  # %
 
 # --- Start stiker (file_id) ---
