@@ -40,8 +40,8 @@ async def show_shop(message: Message):
 
         text = (
             f"{item['emoji']} <b>{item['label']}</b>\n\n"
-            f"Real narx: {buy_price} {CURRENCY_NAME}\n"
-            f"Sotish narxi: {sell_price} {CURRENCY_NAME}"
+            f"<quoteblock>Sotib olish narxi: {buy_price} {CURRENCY_NAME}\n"
+            f"Sotish narxi: {sell_price} {CURRENCY_NAME}</quoteblock>"
         )
         await message.answer(text, reply_markup=item_trade_kb(item["key"]))
 
