@@ -4,15 +4,15 @@ from aiogram.types import (
     InlineKeyboardMarkup,
     InlineKeyboardButton,
 )
-from config import SUPPORT_URL, CURRENCY_NAME
+from config import SUPPORT_URL, TOPUP_URL, CURRENCY_NAME
 
 
-# --- Asosiy menyu (3 tugma) ---
+# --- Asosiy menyu (4 tugma) ---
 def main_menu_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="🛍 Do'kon"), KeyboardButton(text="👤 Hisobim")],
-            [KeyboardButton(text="🆘 Qo'llab-quvvatlash")],
+            [KeyboardButton(text="💳 Hisob to'ldirish"), KeyboardButton(text="🆘 Qo'llab-quvvatlash")],
         ],
         resize_keyboard=True,
     )
@@ -84,4 +84,11 @@ def transfer_confirm_kb() -> InlineKeyboardMarkup:
 def support_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[[InlineKeyboardButton(text="🔗 Admin bilan bog'lanish", url=SUPPORT_URL)]]
+    )
+
+
+# --- Hisob to'ldirish ---
+def topup_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[[InlineKeyboardButton(text="🔗 Admin bilan bog'lanish", url=TOPUP_URL)]]
     )
