@@ -21,7 +21,7 @@ ITEMS = [
 
 def format_inventory_table(inventory: dict) -> str:
     """Foydalanuvchining aktivlarini 2 ustunli jadval ko'rinishida formatlaydi."""
-    lines = ["🪄Aktivlar\n"]
+    lines = ["<blockquote>🪄Aktivlar\n"]
     for i in range(0, len(ITEMS), 2):
         left = ITEMS[i]
         left_qty = inventory.get(left["key"], 0)
@@ -30,7 +30,7 @@ def format_inventory_table(inventory: dict) -> str:
         if i + 1 < len(ITEMS):
             right = ITEMS[i + 1]
             right_qty = inventory.get(right["key"], 0)
-            row += f"       {right['emoji']} - {right_qty} ta"
+            row += f"       {right['emoji']} - {right_qty} ta</blockquote>"
 
         lines.append(row)
 
