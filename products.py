@@ -12,11 +12,11 @@
 # Mahsulotni o'chirish uchun shu ro'yxatdan qatorni olib tashlang va qayta deploy qiling.
 
 #PRODUCTS = [
-    {
-        "name": "1 oylik telegram premium",
-        "description": "1 oy telegram premium funksiyalaridan erkin foydalanasiz. Akkauntga kirib olib beriladi",
-        "price": 3,  # HB da - narxni o'zingiz to'g'rilang
-        "photo_file_id": None,
-    },
-]
+#    {
+#        "name": "1 oylik telegram #premium",
+#        "description": "1 oy telegram #premium funksiyalaridan erkin #foydalanasiz. Akkauntga kirib olib #beriladi",
+#        "price": 3,  # HB da - narxni #o'zingiz to'g'rilang
+#        "photo_file_id": None,
+#    },
+#]
 PRODUCT = []
