@@ -90,5 +90,5 @@ def support_kb() -> InlineKeyboardMarkup:
 # --- Hisob to'ldirish ---
 def topup_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
-        inline_keyboard=[[InlineKeyboardButton(text="🔗 Admin bilan bog'lanish", url=TOPUP_URL)]]
+        inline_keyboard=[[InlineKeyboardButton(text="Guruh", url=TOPUP_URL)]]
     )
