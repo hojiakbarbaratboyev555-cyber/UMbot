@@ -21,7 +21,7 @@ ITEMS = [
 
 def format_inventory_table(inventory: dict) -> str:
     """Foydalanuvchining aktivlarini 2 ustunli jadval ko'rinishida formatlaydi."""
-    lines = ["$Aktivlar$\n"]
+    lines = ["🪄Aktivlar\n"]
     for i in range(0, len(ITEMS), 2):
         left = ITEMS[i]
         left_qty = inventory.get(left["key"], 0)
