@@ -43,10 +43,10 @@ async def grant_balance(message: Message, command: CommandObject, bot: Bot):
         return
 
     await db.update_balance(user["user_id"], amount)
-    await message.answer(f"✅ {account_number} raqamiga {amount} {CURRENCY_NAME} berildi.")
+    await message.answer(f"<blockquote>✅ {account_number} raqamiga {amount} {CURRENCY_NAME} berildi.</blockquote>")
 
     try:
-        await bot.send_message(user["user_id"], f"💰 Hisobingizga {amount} {CURRENCY_NAME} qo'shildi.")
+        await bot.send_message(user["user_id"], f"<blockquote>💰 Hisobingizga {amount} {CURRENCY_NAME} qo'shildi.</blockquote>")
     except Exception:
         pass
 
