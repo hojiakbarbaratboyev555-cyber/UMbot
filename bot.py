@@ -16,7 +16,7 @@ from config import (
     WEBAPP_HOST,
     WEBAPP_PORT,
 )
-import start, shop, account, support, admin
+import start, shop, account, support, admin, inventory
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -30,6 +30,7 @@ def create_dispatcher() -> Dispatcher:
     dp.include_router(start.router)
     dp.include_router(shop.router)
     dp.include_router(account.router)
+    dp.include_router(inventory.router)
     dp.include_router(support.router)
 
     return dp
