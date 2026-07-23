@@ -24,12 +24,12 @@ async def show_kurs(message: Message):
 
         lines.append(
             f"{item['emoji']}\n"
-            f"Sotib olish: {buy_price} {CURRENCY_NAME}\n"
-            f"Sotish: {sell_price} {CURRENCY_NAME}"
+            f"<blockquote>Sotib olish: {buy_price} {CURRENCY_NAME}\n"
+            f"Sotish: {sell_price} {CURRENCY_NAME}</blockquote>"
         )
 
     now = datetime.now(TASHKENT_TZ).strftime("%d.%m.%Y %H:%M")
-    lines.append(f"Vaqt: {now}")
+    lines.append(f"<blockquote>Vaqt: {now}</blockquote>")
 
     text = "\n\n".join(lines)
     await message.answer(text)
