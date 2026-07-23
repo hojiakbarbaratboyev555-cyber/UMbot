@@ -63,6 +63,13 @@ async def init_db():
                 created_at TIMESTAMP DEFAULT NOW()
             );
 
+            CREATE TABLE IF NOT EXISTS inventory (
+                user_id BIGINT NOT NULL REFERENCES users(user_id),
+                item_key TEXT NOT NULL,
+                quantity INTEGER NOT NULL DEFAULT 0,
+                PRIMARY KEY (user_id, item_key)
+            );
+
             CREATE TABLE IF NOT EXISTS transfers (
                 id SERIAL PRIMARY KEY,
                 from_user_id BIGINT NOT NULL REFERENCES users(user_id),
@@ -289,3 +296,41 @@ async def update_withdrawal_status(withdrawal_id: int, status: str):
 async def get_withdrawal(withdrawal_id: int):
     async with pool.acquire() as conn:
         return await conn.fetchrow("SELECT * FROM withdrawals WHERE id = $1", withdrawal_id)
+
+
+async def add_item_to_inventory(user_id: int, item_key: str, qty: int = 1):
+    async with pool.acquire() as conn:
+        await conn.execute(
+            """
+            INSERT INTO inventory (user_id, item_key, quantity)
+            VALUES ($1, $2, $3)
+            ON CONFLICT (user_id, item_key) DO UPDATE SET quantity = inventory.quantity + $3
+            """,
+            user_id, item_key, qty,
+        )
+
+
+async def remove_item_from_inventory(user_id: int, item_key: str, qty: int = 1) -> bool:
+    """Buyumni inventardan ayiradi. Yetarli bo'lmasa False qaytaradi."""
+    async with pool.acquire() as conn:
+        current = await conn.fetchval(
+            "SELECT quantity FROM inventory WHERE user_id = $1 AND item_key = $2",
+            user_id, item_key,
+        )
+        if not current or current < qty:
+            return False
+        await conn.execute(
+            "UPDATE inventory SET quantity = quantity - $3 WHERE user_id = $1 AND item_key = $2",
+            user_id, item_key, qty,
+        )
+        return True
+
+
+async def get_user_inventory(user_id: int) -> dict:
+    """{item_key: quantity} ko'rinishida, faqat quantity > 0 bo'lganlarni qaytaradi."""
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(
+            "SELECT item_key, quantity FROM inventory WHERE user_id = $1 AND quantity > 0",
+            user_id,
+        )
+        return {r["item_key"]: r["quantity"] for r in rows}
