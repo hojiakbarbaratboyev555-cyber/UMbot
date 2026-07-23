@@ -27,7 +27,7 @@ SUPPORT_URL = os.getenv("SUPPORT_URL", "https://t.me/your_admin_username")
 # --- Valyuta sozlamalari ---
 # HB hech qanday so'm/pul qiymatiga ega emas - sof ichki ball.
 # Faqat admin tomonidan /grant buyrug'i orqali beriladi.
-CURRENCY_NAME = "⌁𝗛𝗕⌁"
+CURRENCY_NAME = "【𝗛𝗕】"
 
 MIN_TRANSFER_AMOUNT = 1
 TRANSFER_COMMISSION_PERCENT = 10  # %
